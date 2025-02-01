@@ -1,0 +1,21 @@
+export const FieldIcons: Record<string, string | null> = {
+    firstName: "/person.png",
+    lastName: "/person.png",
+    email: "/email.png",
+    password: "/lock.png",
+    chooseModule: "/hat.png",
+    gender: "/person.png",
+    disabled: "/disabled.png",
+    phone: "/phone.png",
+    upload: "/upload.png",
+    amount: "/dollar.png",
+    chevron: "/chevron.png",
+    errorIcon: "/error.png",
+    successIcon: "/success.png",
+    eye: "/eye.png",
+    eye_close: "/eye-close.png",
+    chevron_right_white: "/chevron-right-white.png",
+    location: null,
+    description: null,
+  };
+  

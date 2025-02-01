@@ -2,20 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+body {
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --radius: 0.5rem;
   }
 }
+.grayscale {
+  filter: grayscale(100%);
+}
+.group-hover\:casb-blue-filter {
+  filter: invert(19%) sepia(96%) saturate(4962%) hue-rotate(190deg) brightness(100%) contrast(102%);
+}
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+.group:hover img {
+  filter: 
+    brightness(0) 
+    saturate(100%) 
+    invert(42%) 
+    sepia(93%) 
+    saturate(335%) 
+    hue-rotate(158deg) 
+    brightness(97%) 
+    contrast(92%);
 }
