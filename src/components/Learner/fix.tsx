@@ -44,11 +44,11 @@ const RegisterCourseForms = () => {
   return (
     <div className="mt-12">
       <h1 className="text-center mb-8 text-2xl font-bold">Register</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-4xl mx-auto ">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 ">
         {/* Input Fields */}
 
-        <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 px-8 md:px-0 ">
-          <div key="firstName" className="relative flex-1 max-w-[300px] items-center">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+          <div key="firstName" className="relative">
             <div className="relative flex items-center">
               <input
                 type="text"
@@ -59,7 +59,7 @@ const RegisterCourseForms = () => {
                 })}
                 onFocus={() => setFocusFirstName(true)} 
           onBlur={() => setFocusFirstName(false)} 
-                className={`border p-2 w-full  pr-10 pl-8 bg-[#E6E6E6] focus:border-casbBluePrimary focus:outline-none ${
+                className={`border p-2 w-full pr-10 pl-8 bg-[#E6E6E6] focus:border-casbBluePrimary focus:outline-none ${
                   watch("firstName")
                     ? "border-green-500"
                     : errors.firstName
@@ -118,7 +118,7 @@ const RegisterCourseForms = () => {
 
 
           {/* Last Name */}
-          <div key="lastName" className="relative flex-1 max-w-[300px] items-center">
+          <div key="lastName" className="relative">
             <div className="relative flex items-center">
               <input
                 type="text"
@@ -185,8 +185,8 @@ const RegisterCourseForms = () => {
 
         </div>
 
-        <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 px-8 md:px-0">
-          <div key="Email" className="relative flex-1 max-w-[300px] items-center">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+          <div key="Email" className="relative">
             <div className="relative flex items-center">
 
             <input
@@ -256,7 +256,7 @@ const RegisterCourseForms = () => {
             )}
           </div>
 
-          <div key="Location" className="relative flex-1 max-w-[300px] items-center">
+          <div key="Location" className="relative">
             <div className="relative flex items-center">
 
             <input
@@ -321,9 +321,9 @@ const RegisterCourseForms = () => {
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 px-8 md:px-0 ">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-8 ">
           {/* Choose Module */}
-          <div key="chooseModule" className="relative flex-1 max-w-[300px] items-center ">
+          <div key="chooseModule" className="relative ">
             <div className="relative flex items-center">
               <select
                 {...register("chooseModule", {
@@ -331,7 +331,7 @@ const RegisterCourseForms = () => {
                 })}
                 onFocus={() => setFocuschooseModule(true)}
       onBlur={() => setFocuschooseModule(false)}
-                className={`border p-2 w-[255px] md:w-[15vw] pr-10 pl-8 bg-[#E6E6E6] focus:border-casbBluePrimary focus:outline-none text-[#7e7979] appearance-none ${
+                className={`border p-2 w-[269px] md:w-[15vw] pr-10 pl-8 bg-[#E6E6E6] focus:border-casbBluePrimary focus:outline-none text-[#7e7979] appearance-none ${
                   watch("chooseModule")
                     ? "border-green-500"
                     : errors.chooseModule
@@ -410,7 +410,7 @@ const RegisterCourseForms = () => {
                 })}
                 onFocus={() => setFocusGender(true)}
       onBlur={() => setFocusGender(false)}
-                className={`border p-2 w-[255px] md:w-[15vw] pr-10 pl-8 bg-[#E6E6E6] focus:border-casbBluePrimary focus:outline-none text-[#7e7979] appearance-none ${
+                className={`border p-2 w-[269px] md:w-[15vw] pr-10 pl-8 bg-[#E6E6E6] focus:border-casbBluePrimary focus:outline-none text-[#7e7979] appearance-none ${
                   watch("gender")
                     ? "border-green-500"
                     : errors.gender
@@ -433,7 +433,7 @@ const RegisterCourseForms = () => {
                   style={{
                     filter: focusGender
                       ? "invert(19%) sepia(96%) saturate(4962%) hue-rotate(190deg) brightness(100%) contrast(102%)" // Blue for focus
-                      : errors.gender
+                      : errors.firstName
                       ? "invert(19%) sepia(86%) saturate(4962%) hue-rotate(0deg) brightness(90%) contrast(96%)" // Red for error
                       : watch("firstName")
                       ? "invert(19%) sepia(96%) saturate(4962%) hue-rotate(90deg) brightness(100%) contrast(102%)" // Green for success
@@ -491,7 +491,7 @@ const RegisterCourseForms = () => {
       })}
       onFocus={() => setFocusDisabled(true)}
       onBlur={() => setFocusDisabled(false)}
-      className={`border p-2 w-[255px] md:w-[15vw]  pr-10 pl-8 bg-[#E6E6E6] focus:border-casbBluePrimary focus:outline-none appearance-none text-gray-500  ${
+      className={`border p-2 w-[269px] md:w-[15vw]  pr-10 pl-8 bg-gray-200 focus:border-casbBluePrimary focus:outline-none appearance-none text-gray-500  ${
         watch("disabled")
           ? "border-green-500"
           : errors.disabled
@@ -515,7 +515,7 @@ const RegisterCourseForms = () => {
         style={{
           filter: focusDisabled
             ? "invert(19%) sepia(96%) saturate(4962%) hue-rotate(190deg) brightness(100%) contrast(102%)" // Blue for focus
-            : errors.disabled
+            : errors.firstName
             ? "invert(19%) sepia(86%) saturate(4962%) hue-rotate(0deg) brightness(90%) contrast(96%)" // Red for error
             : watch("firstName")
             ? "invert(19%) sepia(96%) saturate(4962%) hue-rotate(90deg) brightness(100%) contrast(102%)" // Green for success
@@ -575,7 +575,7 @@ const RegisterCourseForms = () => {
         })}
         onFocus={() => setFocusPhone(true)}
       onBlur={() => setFocusPhone(false)}
-        className={`border p-2 w-[255px] md:w-[15vw] pr-10 pl-8 bg-[#E6E6E6] focus:border-casbBluePrimary focus:outline-none ${
+        className={`border p-2 w-[269px] md:w-[15vw] pr-10 pl-8 bg-[#E6E6E6] focus:border-casbBluePrimary focus:outline-none ${
           watch("phone")
             ? "border-green-500"
             : errors.phone
@@ -636,7 +636,7 @@ const RegisterCourseForms = () => {
   <div className="relative" key="Image">
     <div className="relative flex items-center justify-center w-full">
       <div
-        className={`relative flex items-center border w-[255px] max-w-[500px] sm:max-w-[80%] md:min-w-[32vw] p-2 bg-[#F5F5F5] focus:border-casbBluePrimary focus:outline-none cursor-pointer appearance-none ${
+        className={`relative flex items-center border w-[269px] max-w-[500px] sm:max-w-[80%] md:min-w-[32vw] p-2 bg-[#F5F5F5] focus:border-casbBluePrimary focus:outline-none cursor-pointer appearance-none ${
           errors.image
             ? "border-red-500" // Error state
             : imagePreview // Check if imagePreview exists to decide success state
@@ -753,7 +753,7 @@ const RegisterCourseForms = () => {
           style={{
             filter: focusAmount
               ? "invert(19%) sepia(96%) saturate(4962%) hue-rotate(190deg) brightness(100%) contrast(102%)" // Blue for focus
-              : errors.amount
+              : errors.firstName
               ? "invert(19%) sepia(86%) saturate(4962%) hue-rotate(0deg) brightness(90%) contrast(96%)" // Red for error
               : watch("firstName")
               ? "invert(19%) sepia(96%) saturate(4962%) hue-rotate(90deg) brightness(100%) contrast(102%)" // Green for success
@@ -803,7 +803,7 @@ const RegisterCourseForms = () => {
             message: "Description cannot be more than 500 characters",
           },
         })}
-        className={`border  w-[255px] max-w-[500px] sm:max-w-[100%] md:min-w-[32vw]  outline-none  flex-grow p-4 bg-[#E6E6E6] focus:border-casbBluePrimary  focus:outline-none resize-none ${
+        className={`border w-full max-w-[500px] sm:max-w-[100%] md:min-w-[32vw] bg-transparent outline-none  flex-grow p-4 bg-[#E6E6E6] focus:border-casbBluePrimary  focus:outline-none resize-none ${
           watch("description")
             ? "border-green-500"
             : errors.description
@@ -853,16 +853,33 @@ const RegisterCourseForms = () => {
 
         {/* Submit Button */}
 
-  <div className="flex items-center justify-center m-auto md:m-0 bg-casbBluePrimary text-white p-2 rounded hover:bg-blue-600 cursor-pointer w-[255px]  md:w-full">
-        <button
-          type="submit"
-          className=""
-        >
-          Register
-        </button>
-        <Image src="/chevron-right-white.png" alt="chevron" width={20} height={20} className="text-white"/>
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-8">
+            <div className="flex items-center justify-center gap-2 cursor-pointer text-black py-3 rounded w-[255px] md:w-52 bg-casbGreyPrimary">
+              <Image
+                src="/back.png"
+                alt="back"
+                width={20}
+                height={20}
+                className="text-white"
+              />
+              <button type="submit" className="" onClick={onClose}>
+                Back
+              </button>
+            </div>
 
-        </div>
+            <div className="flex items-center justify-center m-auto md:m-0 bg-casbBluePrimary text-white p-2 rounded hover:bg-blue-600 cursor-pointer w-[255px]  md:w-80">
+              <button type="submit" className="">
+                Register
+              </button>
+              <Image
+                src="/chevron-right-white.png"
+                alt="chevron"
+                width={20}
+                height={20}
+                className="text-white"
+              />
+            </div>
+          </div>
       </form>
     </div>
   );
