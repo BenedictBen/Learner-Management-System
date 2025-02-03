@@ -9,7 +9,6 @@ import { useLogin } from "@/hooks/learner/useAuth"
 
 import { useRouter } from "next/navigation";
 
-import axios from 'axios';
 
 
 interface LoginFormsProps {
@@ -55,47 +54,6 @@ const LoginForms: React.FC<LoginFormsProps> = ({ onForgotPasswordClick, onSignup
   };
 
 
-
-// Set default credentials configuration
-
-
-// const onSubmit = async (data: FormValues) => {
-//   try {
-//     const response = await axios.post(
-//       'https://tmp-se-project.azurewebsites.net/api/user/auth/signin',
-//       { email: data.email, password: data.password },
-//       { headers: { 'Content-Type': 'application/json' }, withCredentials: true }
-//     );
-
-//     const id = response.data.user._id; // Adjust according to API response
-//     localStorage.setItem('Id', id);
-
-//     // Set default Authorization header for subsequent requests
-//     axios.defaults.headers.common['Authorization'] = `Bearer ${id}`;
-
-//     toast({ title: "Login Successful", status: "success", ... { duration: 5000, isClosable: true } });
-//     onClose();
-//     console.log("Login Response:", response.data);
-// router.push('/learner/dashboard');
-
-//   } catch (error) {
-//     console.error("Login Error:", error);
-  
-//     let errorMessage = "Login failed";
-//     if (axios.isAxiosError(error)) {
-//       errorMessage = error.response?.data?.message || error.message || "Login failed";
-//     }
-  
-//     toast({
-//       title: "Login Failed",
-//       description: errorMessage,
-//       status: "error",
-//       duration: 5000,
-//       isClosable: true,
-//     });
-//   }
-  
-// };
 
 
   return (

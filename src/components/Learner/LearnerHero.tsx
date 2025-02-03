@@ -7,7 +7,7 @@ const LearnerHero = () => {
         {/* Desktop View */}
     <div className='hidden md:block bg-casbBluePrimary'>
         <div className=' md:flex items-center justify-around px-8 py-24'>
-            <div className='flex w-1/3 flex-col items-left gap-4  px-8 pt-8 lg:pl-12  text-white '>
+            <div className='flex w-1/3 flex-col items-left gap-4  px-8 pt-8 lg:pl-12 xl:pl-20  text-white '>
                 <h2 className='sm:text-lg lg:text-xl font-bold'>
                 Unlock Your Potential with 
                 Industry-Leading Courses!

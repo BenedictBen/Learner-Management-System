@@ -66,7 +66,7 @@ const LoginModal: React.FC = () => {
     e.stopPropagation();
     onOpen();
   };
-
+  // 626769
   const renderLoginModal = () => {
     if (isLargeScreen) {
       return (
@@ -78,12 +78,10 @@ const LoginModal: React.FC = () => {
           </PopoverTrigger>
           <PopoverContent width="400px">
             <PopoverBody>
-              {isForgetPasswordOpen ? (
-                isResetPasswordOpen ? (
-                  <ResetPassword onClose={closeResetPassword} onSignupClick={openSignup} />
-                ) : (
-                  <ForgetPassword onClose={closeForgetPassword} onResetPasswordClick={openResetPassword} openSignup={openSignup} />
-                )
+            {isResetPasswordOpen ? ( // Prioritize ResetPassword
+                <ResetPassword onClose={closeResetPassword} onSignupClick={openSignup} />
+              ) : isForgetPasswordOpen ? (
+                <ForgetPassword onClose={closeForgetPassword} onResetPasswordClick={openResetPassword} openSignup={openSignup} />
               ) : isSignupOpen ? (
                 isVerificationOpen ? (
                   <OtpVerification onClose={closeVerification} onVerify={handleVerify} />

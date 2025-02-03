@@ -3,6 +3,11 @@ import { FieldIcons } from "@/lib/FormsIcons";
 import Image from 'next/image';
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form';
+import { useSignup } from "@/hooks/learner/useAuth"
+import { Spinner, useToast } from "@chakra-ui/react";
+import { useDispatch } from 'react-redux';
+import { setPendingEmail,setVerificationToken } from "@/features/authSlice";
+
 
 interface SignupFormProps {
     onVerificationClick: () => void;
@@ -14,23 +19,25 @@ interface SignupFormProps {
       const [focusPassword, setFocusPassword] = useState<boolean>(false);
       const [focusEmail, setFocusEmail] = useState<boolean>(false);
       const [showPassword, setShowPassword] = useState<boolean>(false);
-        const [focusNewPassword, setFocusNewPassword] = useState<boolean>(false);
+        
         const [focusConfirmPassword, setFocusConfirmPassword] = useState<boolean>(false);
-        const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
+      
         const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+
+      
 
       const togglePasswordVisibility = (): void => {
         setShowPassword(!showPassword);
       };
-
-      const toggleNewPasswordVisibility = (): void => {
-        setShowNewPassword(!showNewPassword);
-      };
     
       const toggleConfirmPasswordVisibility = (): void => {
         setShowConfirmPassword(!showConfirmPassword);
+
       };
 
+        const { mutate: signup, isPending } = useSignup();
+        const toast = useToast();
+        const dispatch = useDispatch();
 
       const {
         handleSubmit,
@@ -40,13 +47,40 @@ interface SignupFormProps {
       } = useForm<FormValues>();
     
       const onSubmit = (data: FormValues): void => {
-        console.log(data);
-         // Trigger the verification modal
-        onVerificationClick();
+        const payload = {
+          email: data.email,
+          password: data.password 
+        };
+        signup(payload, {
+          onSuccess: (responseData) => {
+            // Store email in Redux and localStorage
+            const { email, verificationToken } = responseData.user;
+            dispatch(setPendingEmail(email));
+            dispatch(setVerificationToken(verificationToken))
+            console.log('Stored email:', email);
+      console.log('Stored verification token:', verificationToken);
+            // Trigger verification modal
+            onVerificationClick();
+          },
+          onError: (error) => {
+            toast({
+              title: "Login Failed",
+              description: error.message,
+              status: "error",
+              duration: 5000,
+              isClosable: true,
+            });
+          }
+        })
+       
       };
 
-      const newPassword = watch('newPassword');
+      const password = watch('password');
       const confirmPassword = watch('confirmPassword');
+
+      const validatePasswordMatch = (value: string) => {
+        return value === watch('password') || 'Passwords do not match';
+      };
 
   return (
     <div>
@@ -134,30 +168,30 @@ interface SignupFormProps {
                 
                         {/* Password Input */}
 <div>
-          <div key="NewPassword" className="relative">
+          <div key="Password" className="relative">
             <div className="relative flex items-center">
               <input
-                type={showNewPassword ? 'text' : 'password'}
+                type={showPassword ? 'text' : 'password'}
                 placeholder="Password"
-                {...register('newPassword', {
+                {...register('password', {
                   required: 'Password is required',
                   minLength: {
                     value: 8,
                     message: 'Password must be at least 8 characters',
                   },
-                  // pattern: {
-                  //   value:
-                  //     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                  //   message:
-                  //     'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
-                  // },
+                  pattern: {
+                    value:
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                    message:
+                      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
+                  },
                 })}
-                onFocus={() => setFocusNewPassword(true)}
-                onBlur={() => setFocusNewPassword(false)}
+                onFocus={() => setFocusPassword(true)}
+                onBlur={() => setFocusPassword(false)}
                 className={`border p-2 w-full pr-10 pl-8 bg-[#E6E6E6] focus:border-casbBluePrimary focus:outline-none ${
-                  newPassword
+                  password
                     ? 'border-green-500'
-                    : errors.newPassword
+                    : errors.password
                     ? 'border-red-500'
                     : 'border-gray-300'
                 }`}
@@ -170,17 +204,17 @@ interface SignupFormProps {
                   height={20}
                   className="absolute left-2 top-5 transform -translate-y-1/2"
                   style={{
-                    filter: focusNewPassword
+                    filter: focusPassword
                       ? 'invert(19%) sepia(96%) saturate(4962%) hue-rotate(190deg) brightness(100%) contrast(102%)' // Blue for focus
-                      : errors.newPassword
+                      : errors.password
                       ? 'invert(19%) sepia(86%) saturate(4962%) hue-rotate(0deg) brightness(90%) contrast(96%)' // Red for error
-                      : newPassword
+                      : password
                       ? 'invert(19%) sepia(96%) saturate(4962%) hue-rotate(90deg) brightness(100%) contrast(102%)' // Green for success
                       : 'invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)', // Default gray
                   }}
                 />
               )}
-              {newPassword && (
+              {password && (
                 <Image
                   src={FieldIcons.successIcon as string}
                   alt="Success"
@@ -189,7 +223,7 @@ interface SignupFormProps {
                   className="absolute right-2 top-1/2 transform -translate-y-1/2"
                 />
               )}
-              {errors.newPassword && (
+              {errors.password && (
                 <>
                   <Image
                     src={FieldIcons.errorIcon as string}
@@ -203,24 +237,24 @@ interface SignupFormProps {
 
               {/* Toggle Password Visibility Icon */}
               <div
-                onClick={toggleNewPasswordVisibility}
+                onClick={togglePasswordVisibility}
                 className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
               >
                 <Image
                   src={
-                    showNewPassword
+                    showPassword
                       ? (FieldIcons.eye_close as string)
                       : (FieldIcons.eye as string)
                   }
-                  alt={showNewPassword ? 'Hide Password' : 'Show Password'}
+                  alt={showPassword ? 'Hide Password' : 'Show Password'}
                   width={20}
                   height={20}
                 />
               </div>
             </div>
-            {errors.newPassword && (
+            {errors.password && (
               <p className="text-red-500 text-sm mt-1 flex items-center">
-                {errors.newPassword.message}
+                {errors.password.message}
               </p>
             )}
           </div>
@@ -235,8 +269,7 @@ interface SignupFormProps {
                 placeholder="Confirm Password"
                 {...register('confirmPassword', {
                   required: 'Confirm Password is required',
-                  validate: (value) =>
-                    value === newPassword || 'Passwords do not match',
+                  validate: validatePasswordMatch
                 })}
                 onFocus={() => setFocusConfirmPassword(true)}
                 onBlur={() => setFocusConfirmPassword(false)}
@@ -312,12 +345,21 @@ interface SignupFormProps {
           </div>
         </div>
                 
-                        {/* Submit Button */}
-
-                        <div className='flex items-center justify-center hover:bg-blue-600 cursor-pointer text-white py-2 rounded w-full bg-casbBluePrimary'>
-                                                    <button type="submit" className=" ">Register</button>
-                                                    <Image src="/chevron-right-white.png" alt="chevron" width={20} height={20} className="text-white"/>
-                                            </div>
+                    {/* Submit Button */}
+                        {isPending ? (
+          <div className="flex items-center justify-center gap-2 w-full bg-casbBluePrimary text-white py-2 rounded hover:bg-blue-600">
+            <Spinner size="sm" color="blue-500" />
+            <span>Registering...</span>
+          </div>
+        ) : (
+          <button
+            type="submit"
+            className="w-full bg-casbBluePrimary text-white py-2 rounded flex items-center justify-center gap-2 hover:bg-blue-600"
+          >
+            Register
+            <Image src="/chevron-right-white.png" alt="chevron" width={20} height={20} />
+          </button>
+        )}
                       </form>
 
                       <div className="flex underline items-center justify-center gap-2 decoration-casbBluePrimary my-1">

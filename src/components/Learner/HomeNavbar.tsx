@@ -13,18 +13,18 @@ import {
   MenuList,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, shallowEqual  } from "react-redux";
 import { RootState } from "@/lib/store";
 import { logout } from "@/features/authSlice";
 import { usePathname } from "next/navigation";
 
 const HomeNavbar = () => {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
-  const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
   const { isAuthenticated, user } = useSelector((state: RootState) => ({
     isAuthenticated: state.auth.isAuthenticated,
     user: state.auth.user,
-  }));
+}), shallowEqual);
+
   const dispatch = useDispatch();
 
   const pathname = usePathname();
@@ -63,18 +63,26 @@ const HomeNavbar = () => {
           </div>
           <div className="hidden md:flex">
             <Link href="/learner">
-              <h3 
-              className={`${
-                pathname === "/learner" ? "text-casbBluePrimary" : "text-black"
-              } hover:text-casbHover`}
-              >Home</h3>
+              <h3
+                className={`${
+                  pathname === "/learner"
+                    ? "text-casbBluePrimary"
+                    : "text-black"
+                } hover:text-casbHover`}
+              >
+                Home
+              </h3>
             </Link>
           </div>
           <div className="hidden md:flex">
             <Link href="/">
-              <h3 className={`${
-            pathname === "/" ? "text-casbBluePrimary" : "text-black"
-          } hover:text-casbHover`}>Courses</h3>
+              <h3
+                className={`${
+                  pathname === "/" ? "text-casbBluePrimary" : "text-black"
+                } hover:text-casbHover`}
+              >
+                Courses
+              </h3>
             </Link>
           </div>
         </div>
@@ -83,15 +91,15 @@ const HomeNavbar = () => {
           {isAuthenticated ? (
             <Menu variant="unstyled">
               <MenuButton
-              _hover={{ 
-                bg: "none",      
-                textDecoration: "none", 
-                boxShadow: "none", 
-                transform: "none" 
-              }}
-              _active={{
-                bg: "none",      
-              }}
+                _hover={{
+                  bg: "none",
+                  textDecoration: "none",
+                  boxShadow: "none",
+                  transform: "none",
+                }}
+                _active={{
+                  bg: "none",
+                }}
                 as={Button}
                 variant="ghost"
                 rounded="full"
@@ -123,19 +131,18 @@ const HomeNavbar = () => {
                 >
                   <div className="flex items-center  ">
                     <div className="flex items-center gap-2 group cursor-pointer">
-                    <Image 
-    src="/hat.png" 
-    alt="hat" 
-    width={20} 
-    height={15}
-    className="transition-all duration-300"
-  />
-  <span className="transition-colors duration-300 group-hover:text-casbSeaBlueSecondary">
-    Portal
-  </span>
+                      <Image
+                        src="/hat.png"
+                        alt="hat"
+                        width={20}
+                        height={15}
+                        className="transition-all duration-300"
+                      />
+                      <span className="transition-colors duration-300 group-hover:text-casbSeaBlueSecondary">
+                        Portal
+                      </span>
                     </div>
- 
-</div>
+                  </div>
                 </MenuItem>
                 <MenuItem
                   minH="40px"
@@ -143,42 +150,42 @@ const HomeNavbar = () => {
                     dispatch(logout());
                     router.push("/learner");
                   }}
-                 
                 >
                   <div className="flex items-center">
                     <div className="flex items-center gap-2 group cursor-pointer">
-                    <Image
-                      src="/log-in.png"
-                      width={20}
-                      height={15}
-                      alt="hat"
-                      className="transition-all duration-300"
-                    />
-                    <span className="transition-colors duration-300 group-hover:text-casbSeaBlueSecondary">logout</span>
+                      <Image
+                        src="/log-in.png"
+                        width={20}
+                        height={15}
+                        alt="hat"
+                        className="transition-all duration-300"
+                      />
+                      <span className="transition-colors duration-300 group-hover:text-casbSeaBlueSecondary">
+                        logout
+                      </span>
                     </div>
-                    
                   </div>
                 </MenuItem>
               </MenuList>
             </Menu>
           ) : (
             <div className="hidden md:flex relative border-casbSeaBlueSecondary border rounded-sm active:bg-casbHover hover:bg-casbHover group">
-              <div className="flex gap-2 py-2 px-5 items-center text-casbBluePrimary">
+              <div className="flex gap-2 py-2 px-5 items-center group">
                 <LoginModal />
-                <div className="relative group overflow-hidden m-0">
+                <div className="relative group overflow-hidden m-0 ">
                   <Image
                     src="/log-in-blue.svg"
                     alt="log-in-blue"
                     width={20}
                     height={15}
-                    className="object-fill transition-opacity duration-300 group-hover:opacity-0"
+                    className="object-fill transition-opacity duration-300 group-hover:opacity-0 "
                   />
                   <Image
-                    src="/log-in.svg"
+                    src="/log-in-white.svg"
                     alt="log-in-white"
                     width={20}
                     height={15}
-                    className="absolute inset-0 object-fill transition-opacity duration-300 opacity-0 group-hover:opacity-100"
+                    className="absolute inset-0 object-fill transition-opacity duration-300 opacity-0 group-hover:opacity-100 "
                   />
                 </div>
               </div>
@@ -216,111 +223,109 @@ const HomeNavbar = () => {
               <h3 className="hover:text-casbHover">Courses</h3>
             </Link>
             {isAuthenticated ? (
-            <Menu variant="unstyled">
-              <MenuButton
-              _hover={{ 
-                bg: "none",      
-                textDecoration: "none", 
-                boxShadow: "none", 
-                transform: "none" 
-              }}
-              _active={{
-                bg: "none",      
-              }}
-                as={Button}
-                variant="ghost"
-                rounded="full"
-                p={0}
-                rightIcon={
-                  <Image
-                    src="/arrow-b.png"
-                    alt="Dropdown arrow"
-                    width={10}
-                    height={10}
-                  />
-                }
-              >
-                <Flex alignItems="center" gap={2}>
-                  <Avatar
-                    name={user ? getDisplayName(user.email) : ""}
-                    bg="teal.500"
-                    color="white"
-                    size="sm"
-                    getInitials={(name) => getInitials(name)}
-                  />
-                  <span>{user ? getDisplayName(user.email) : "Guest"}</span>
-                </Flex>
-              </MenuButton>
-              <MenuList>
-                <MenuItem
-                  minH="48px"
-                  onClick={() => router.push("/learner/dashboard")}
-                  // _hover={{ color: '#014273' }}
-                >
-                  <div className="flex items-center  ">
-                    <div className="flex items-center gap-2 group cursor-pointer">
-                    <Image 
-    src="/hat.png" 
-    alt="hat" 
-    width={20} 
-    height={15}
-    className="transition-all duration-300"
-  />
-  <span className="transition-colors duration-300 group-hover:text-casbSeaBlueSecondary">
-    Portal
-  </span>
-                    </div>
- 
-</div>
-                </MenuItem>
-                <MenuItem
-                  minH="40px"
-                  onClick={() => {
-                    dispatch(logout());
-                    router.push("/learner");
+              <Menu variant="unstyled">
+                <MenuButton
+                  _hover={{
+                    bg: "none",
+                    textDecoration: "none",
+                    boxShadow: "none",
+                    transform: "none",
                   }}
-                 
-                >
-                  <div className="flex items-center">
-                    <div className="flex items-center gap-2 group cursor-pointer">
+                  _active={{
+                    bg: "none",
+                  }}
+                  as={Button}
+                  variant="ghost"
+                  rounded="full"
+                  p={0}
+                  rightIcon={
                     <Image
-                      src="/log-in.png"
+                      src="/arrow-b.png"
+                      alt="Dropdown arrow"
+                      width={10}
+                      height={10}
+                    />
+                  }
+                >
+                  <Flex alignItems="center" gap={2}>
+                    <Avatar
+                      name={user ? getDisplayName(user.email) : ""}
+                      bg="teal.500"
+                      color="white"
+                      size="sm"
+                      getInitials={(name) => getInitials(name)}
+                    />
+                    <span>{user ? getDisplayName(user.email) : "Guest"}</span>
+                  </Flex>
+                </MenuButton>
+                <MenuList>
+                  <MenuItem
+                    minH="48px"
+                    onClick={() => router.push("/learner/dashboard")}
+                    // _hover={{ color: '#014273' }}
+                  >
+                    <div className="flex items-center  ">
+                      <div className="flex items-center gap-2 group cursor-pointer">
+                        <Image
+                          src="/hat.png"
+                          alt="hat"
+                          width={20}
+                          height={15}
+                          className="transition-all duration-300"
+                        />
+                        <span className="transition-colors duration-300 group-hover:text-casbSeaBlueSecondary">
+                          Portal
+                        </span>
+                      </div>
+                    </div>
+                  </MenuItem>
+                  <MenuItem
+                    minH="40px"
+                    onClick={() => {
+                      dispatch(logout());
+                      router.push("/learner");
+                    }}
+                  >
+                    <div className="flex items-center">
+                      <div className="flex items-center gap-2 group cursor-pointer">
+                        <Image
+                          src="/log-in.png"
+                          width={20}
+                          height={15}
+                          alt="hat"
+                          className="transition-all duration-300"
+                        />
+                        <span className="transition-colors duration-300 group-hover:text-casbSeaBlueSecondary">
+                          logout
+                        </span>
+                      </div>
+                    </div>
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            ) : (
+              <Link href="/">
+                <div className="flex gap-2 w-28 py-2 px-5 items-center border-casbSeaBlueSecondary border rounded-sm active:bg-casbHover hover:bg-casbHover hover:text-white group">
+                  <LoginModal />
+                  <div className="relative group overflow-hidden m-0">
+                    <Image
+                      src="/log-in-blue.svg"
+                      alt="log-in-blue"
                       width={20}
                       height={15}
-                      alt="hat"
-                      className="transition-all duration-300"
+                      className="object-fill transition-opacity duration-300 group-hover:opacity-0"
                     />
-                    <span className="transition-colors duration-300 group-hover:text-casbSeaBlueSecondary">logout</span>
-                    </div>
-                    
+                    <Image
+                      src="/log-in.svg"
+                      alt="log-in-white"
+                      width={20}
+                      height={15}
+                      className="absolute inset-0 object-fill transition-opacity duration-300 opacity-0 group-hover:opacity-100"
+                    />
                   </div>
-                </MenuItem>
-              </MenuList>
-            </Menu>
-          ) :(
-
-            <Link href="/">
-              <div className="flex gap-2 w-28 py-2 px-5 items-center border-casbSeaBlueSecondary border rounded-sm active:bg-casbHover hover:bg-casbHover hover:text-white group">
-                <LoginModal />
-                <div className="relative group overflow-hidden m-0">
-                  <Image
-                    src="/log-in-blue.svg"
-                    alt="log-in-blue"
-                    width={20}
-                    height={15}
-                    className="object-fill transition-opacity duration-300 group-hover:opacity-0"
-                  />
-                  <Image
-                    src="/log-in.svg"
-                    alt="log-in-white"
-                    width={20}
-                    height={15}
-                    className="absolute inset-0 object-fill transition-opacity duration-300 opacity-0 group-hover:opacity-100"
-                  />
                 </div>
-              </div>
-            </Link>
-          )}
+              </Link>
+            )}
           </div>
         </div>
       )}
