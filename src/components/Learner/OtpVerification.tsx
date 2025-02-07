@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useSelector, shallowEqual } from "react-redux";
 import { RootState } from "@/lib/store";
 import { Spinner } from "@chakra-ui/react";
+import { signIn } from "next-auth/react";
 
 interface VerificationCodeProps {
   onClose: () => void;
@@ -57,6 +58,7 @@ const OtpVerification: React.FC<VerificationCodeProps> = ({
     //   setError("No email associated with this verification");
     //   return;
     // }
+    
 
     verifyOtp(fullCode.trim());
   };

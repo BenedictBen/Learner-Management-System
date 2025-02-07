@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Button,
   Popover,
@@ -12,11 +14,37 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import LoginForms from "./LoginForms";
-import ForgetPassword from "./ForgetPassword";
-import SignUpForm from "./SignUpForm";
-import ResetPassword from "./ResetPassword";
-import OtpVerification from "./OtpVerification";
+import dynamic from "next/dynamic";
+import { Spinner } from "@chakra-ui/react";
+
+// Dynamically import client-side only components
+const LoginForms = dynamic(
+  () => import("./LoginForms"),
+  { 
+    ssr: false,
+    loading: () => <Spinner size="sm" />
+  }
+);
+
+const ForgetPassword = dynamic(
+  () => import("./ForgetPassword"),
+  { ssr: false }
+);
+
+const SignUpForm = dynamic(
+  () => import("./SignUpForm"),
+  { ssr: false }
+);
+
+const ResetPassword = dynamic(
+  () => import("./ResetPassword"),
+  { ssr: false }
+);
+
+const OtpVerification = dynamic(
+  () => import("./OtpVerification"),
+  { ssr: false }
+);
 
 const LoginModal: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -25,16 +53,14 @@ const LoginModal: React.FC = () => {
   const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
   const [isVerificationOpen, setIsVerificationOpen] = useState(false);
 
-  // Detect screen size
   const isLargeScreen = useBreakpointValue({ base: false, lg: true });
 
-  // Close functions
+  // State management functions remain the same
   const closeVerification = () => setIsVerificationOpen(false);
   const closeSignup = () => setIsSignupOpen(false);
   const closeForgetPassword = () => setIsForgetPasswordOpen(false);
   const closeResetPassword = () => setIsResetPasswordOpen(false);
 
-  // Open functions
   const openSignup = () => {
     setIsSignupOpen(true);
     setIsForgetPasswordOpen(false);
@@ -60,79 +86,84 @@ const LoginModal: React.FC = () => {
     closeVerification();
   };
 
-  // Fix: Prevent default and ensure modal opens
   const handleOpen = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     onOpen();
   };
-  // 626769
+
+  const renderContent = () => {
+    if (isResetPasswordOpen) {
+      return <ResetPassword onClose={closeResetPassword} onSignupClick={openSignup} />;
+    }
+    if (isForgetPasswordOpen) {
+      return (
+        <ForgetPassword 
+          onClose={closeForgetPassword} 
+          onResetPasswordClick={openResetPassword} 
+          openSignup={openSignup} 
+        />
+      );
+    }
+    if (isSignupOpen) {
+      return isVerificationOpen ? (
+        <OtpVerification onClose={closeVerification} onVerify={handleVerify} />
+      ) : (
+        <SignUpForm onClose={closeSignup} onVerificationClick={openVerification} />
+      );
+    }
+    return <LoginForms 
+             onForgotPasswordClick={openForgetPassword} 
+             onSignupClick={openSignup} 
+             onClose={onClose} 
+           />;
+  };
+
   const renderLoginModal = () => {
     if (isLargeScreen) {
       return (
         <Popover placement="bottom" closeOnBlur={true}>
           <PopoverTrigger>
-            <Button type="button" className="text-casbBluePrimary group-hover:text-white" variant="unstyled" size="base">
+            <Button 
+              type="button" 
+              className="text-casbBluePrimary group-hover:text-white" 
+              variant="unstyled" 
+              size="base"
+            >
               Login
             </Button>
           </PopoverTrigger>
           <PopoverContent width="400px">
             <PopoverBody>
-            {isResetPasswordOpen ? ( // Prioritize ResetPassword
-                <ResetPassword onClose={closeResetPassword} onSignupClick={openSignup} />
-              ) : isForgetPasswordOpen ? (
-                <ForgetPassword onClose={closeForgetPassword} onResetPasswordClick={openResetPassword} openSignup={openSignup} />
-              ) : isSignupOpen ? (
-                isVerificationOpen ? (
-                  <OtpVerification onClose={closeVerification} onVerify={handleVerify} />
-                ) : (
-                  <SignUpForm onClose={closeSignup} onVerificationClick={openVerification} />
-                )
-              ) : (
-                <LoginForms onForgotPasswordClick={openForgetPassword} onSignupClick={openSignup} onClose={onClose} />
-              )}
+              {renderContent()}
             </PopoverBody>
           </PopoverContent>
         </Popover>
       );
-    } else {
-      return (
-        <>
-          <Button
-            type="button"
-            className="text-casbBluePrimary group-hover:text-white"
-            variant="unstyled"
-            size="base"
-            onClick={handleOpen} // Ensure modal opens properly
-          >
-            Login
-          </Button>
-
-          <Modal isOpen={isOpen} onClose={onClose} isCentered>
-            <ModalOverlay />
-            <ModalContent width={{ base: "90%", sm: "80%", md: "400px" }} maxWidth="400px" borderRadius="lg">
-              <ModalBody p={4}>
-                {isForgetPasswordOpen ? (
-                  isResetPasswordOpen ? (
-                    <ResetPassword onClose={closeResetPassword} onSignupClick={openSignup} />
-                  ) : (
-                    <ForgetPassword onClose={closeForgetPassword} onResetPasswordClick={openResetPassword} openSignup={openSignup} />
-                  )
-                ) : isSignupOpen ? (
-                  isVerificationOpen ? (
-                    <OtpVerification onClose={closeVerification} onVerify={handleVerify} />
-                  ) : (
-                    <SignUpForm onClose={closeSignup} onVerificationClick={openVerification} />
-                  )
-                ) : (
-                  <LoginForms onForgotPasswordClick={openForgetPassword} onSignupClick={openSignup} onClose={onClose} />
-                )}
-              </ModalBody>
-            </ModalContent>
-          </Modal>
-        </>
-      );
     }
+
+    return (
+      <>
+        <Button
+          type="button"
+          className="text-casbBluePrimary group-hover:text-white"
+          variant="unstyled"
+          size="base"
+          onClick={handleOpen}
+        >
+          Login
+        </Button>
+
+        <Modal isOpen={isOpen} onClose={onClose} isCentered>
+          <ModalOverlay />
+          <ModalContent width={{ base: "90%", sm: "80%", md: "400px" }} maxWidth="400px" borderRadius="lg">
+            <ModalBody p={4}>
+              {renderContent()}
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+      </>
+    );
   };
 
   return <>{renderLoginModal()}</>;

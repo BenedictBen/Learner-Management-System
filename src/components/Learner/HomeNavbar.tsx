@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import LoginModal from "./LoginModal";
@@ -17,6 +17,7 @@ import { useDispatch, useSelector, shallowEqual  } from "react-redux";
 import { RootState } from "@/lib/store";
 import { logout } from "@/features/authSlice";
 import { usePathname } from "next/navigation";
+import { handleGoogleSignOut } from "@/actions/auth-actions";
 
 const HomeNavbar = () => {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
@@ -28,6 +29,21 @@ const HomeNavbar = () => {
   const dispatch = useDispatch();
 
   const pathname = usePathname();
+
+  const handleLogout = async () => {
+    try {
+      // Sign out from Google if logged in
+      await handleGoogleSignOut();
+    } catch (error) {
+      console.error("Google sign-out error:", error);
+    }
+
+    // Dispatch Redux logout action
+    dispatch(logout());
+
+    // Redirect to learner page
+    router.push("/learner");
+  };
 
   const getDisplayName = (email?: string | null) => {
     if (!email) return "Guest";
@@ -45,6 +61,8 @@ const HomeNavbar = () => {
 
   const router = useRouter();
 
+  const actualDisplayName = user ? (user.name ? user.name : getDisplayName(user.email)) : "Guest";
+
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -56,7 +74,7 @@ const HomeNavbar = () => {
   return (
     <div className="fixed top-0 left-0 w-full z-30 bg-white">
       {/* Top Nav */}
-      <div className="bg-white flex items-center justify-between px-4 py-4 md:justify-around md:px-[0]">
+      <div className="bg-white flex items-center justify-between px-2 py-4 md:justify-around md:px-[0]">
         <div className="flex items-center gap-5 cursor-pointer">
           <div>
             <Image alt="logo" src="/logo-L.png" width={80} height={20} />
@@ -114,14 +132,15 @@ const HomeNavbar = () => {
                 }
               >
                 <Flex alignItems="center" gap={2}>
-                  <Avatar
-                    name={user ? getDisplayName(user.email) : ""}
+                <Avatar
+                    src={user && user.image ? user.image : undefined}
+                    name={actualDisplayName}
                     bg="teal.500"
                     color="white"
                     size="sm"
                     getInitials={(name) => getInitials(name)}
                   />
-                  <span>{user ? getDisplayName(user.email) : "Guest"}</span>
+                   <span>{actualDisplayName}</span>
                 </Flex>
               </MenuButton>
               <MenuList>
@@ -146,10 +165,7 @@ const HomeNavbar = () => {
                 </MenuItem>
                 <MenuItem
                   minH="40px"
-                  onClick={() => {
-                    dispatch(logout());
-                    router.push("/learner");
-                  }}
+                  onClick={handleLogout}
                 >
                   <div className="flex items-center">
                     <div className="flex items-center gap-2 group cursor-pointer">
@@ -248,14 +264,23 @@ const HomeNavbar = () => {
                   }
                 >
                   <Flex alignItems="center" gap={2}>
-                    <Avatar
+                    {/* <Avatar
                       name={user ? getDisplayName(user.email) : ""}
                       bg="teal.500"
                       color="white"
                       size="sm"
                       getInitials={(name) => getInitials(name)}
                     />
-                    <span>{user ? getDisplayName(user.email) : "Guest"}</span>
+                    <span>{user ? getDisplayName(user.email) : "Guest"}</span> */}
+                    <Avatar
+                    src={user && user.image ? user.image : undefined}
+                    name={actualDisplayName}
+                    bg="teal.500"
+                    color="white"
+                    size="sm"
+                    getInitials={(name) => getInitials(name)}
+                  />
+                   <span>{actualDisplayName}</span>
                   </Flex>
                 </MenuButton>
                 <MenuList>
@@ -281,10 +306,7 @@ const HomeNavbar = () => {
                   </MenuItem>
                   <MenuItem
                     minH="40px"
-                    onClick={() => {
-                      dispatch(logout());
-                      router.push("/learner");
-                    }}
+                    onClick={handleLogout}
                   >
                     <div className="flex items-center">
                       <div className="flex items-center gap-2 group cursor-pointer">

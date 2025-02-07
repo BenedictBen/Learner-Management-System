@@ -1,5 +1,7 @@
+"use client"
+
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FormValues } from "@/lib/types";
 import { FieldIcons } from "@/lib/FormsIcons";
@@ -9,6 +11,10 @@ import { useLogin } from "@/hooks/learner/useAuth"
 
 import { useRouter } from "next/navigation";
 
+
+import { handleGoogleSignIn } from '@/actions/auth-actions';
+// import { signIn } from "@/googleAuth/googleAuth";
+import { signIn } from "next-auth/react";
 
 
 interface LoginFormsProps {
@@ -22,13 +28,29 @@ const LoginForms: React.FC<LoginFormsProps> = ({ onForgotPasswordClick, onSignup
   const [focusPassword, setFocusPassword] = useState<boolean>(false);
   const [focusEmail, setFocusEmail] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const router = useRouter();
 
   const togglePasswordVisibility = (): void => {
     setShowPassword(!showPassword);
   };
-
+// Add this useEffect to your login component
+useEffect(() => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const error = urlParams.get('error');
+  
+  if (error === 'AuthenticationFailed') {
+    toast({
+      title: "Authentication Failed",
+      description: "Invalid email or password",
+      status: "error",
+      duration: 5000,
+      isClosable: true,
+    });
+  }
+}, []);
   const toast = useToast();
   const { mutate: login, isPending } = useLogin();
 
@@ -39,22 +61,52 @@ const LoginForms: React.FC<LoginFormsProps> = ({ onForgotPasswordClick, onSignup
     watch,
   } = useForm<FormValues>();
 
-  const onSubmit = (data: FormValues) => {
-    login(data, {
-      onError: (error) => {
-        toast({
-          title: "Login Failed",
-          description: error.message,
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
+  // const onSubmit = (data: FormValues) => {
+  //   login(data, {
+  //     onError: (error) => {
+  //       toast({
+  //         title: "Login Failed",
+  //         description: error.message,
+  //         status: "error",
+  //         duration: 5000,
+  //         isClosable: true,
+  //       });
+  //     }
+  //   });
+  // };
+
+  const handleLogin = async (data: FormValues) => {
+    setIsLoading(true);
+    try {
+      const result = await signIn('credentials', {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
+  
+      if (result?.error) {
+        let errorMessage = "Invalid email or password";
+        if (result.error === "CredentialsSignin") {
+          errorMessage = "Invalid email or password combination";
+        }
+        throw new Error(errorMessage);
       }
-    });
+  
+      if (result?.ok) {
+        router.push('/learner/dashboard');
+      }
+    } catch (error: any) {
+      toast({
+        title: "Login Failed",
+        description: error.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
-
-
-
 
   return (
     <div>
@@ -63,11 +115,19 @@ const LoginForms: React.FC<LoginFormsProps> = ({ onForgotPasswordClick, onSignup
         <div className="flex items-center justify-center mb-2">
           <div className="border border-casbBluePrimary w-64 mx-auto flex items-center justify-center gap-1 ">
             <Image src="/Google.png" alt="google" width={15} height={15} />
-            <button>Log in using Google</button>
+            {isGoogleLoading ? (
+              <div className="flex items-center justify-center gap-2">
+              <Spinner size="sm" color="blue.500" thickness="4px" speed="0.65s" />
+            </div>
+            ) : (
+              <form action={handleGoogleSignIn}>
+              <button>Log in using Google</button>
+            </form>
+            )}
           </div>
         </div>
         <p className="text-center my-1">or</p>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 px-6">
+      <form onSubmit={handleSubmit(handleLogin)} className="space-y-6 px-6">
         {/* Email Input */}
         <div>
           <div key="Email" className="relative">
@@ -103,7 +163,7 @@ const LoginForms: React.FC<LoginFormsProps> = ({ onForgotPasswordClick, onSignup
                 style={{
                   filter: focusEmail
                   ? "invert(19%) sepia(96%) saturate(4962%) hue-rotate(190deg) brightness(100%) contrast(102%)" // Blue for focus
-                  : errors.password
+                  : errors.email
                   ? "invert(19%) sepia(86%) saturate(4962%) hue-rotate(0deg) brightness(90%) contrast(96%)" // Red for error
                   : watch("password")
                   ? "invert(19%) sepia(96%) saturate(4962%) hue-rotate(90deg) brightness(100%) contrast(102%)" // Green for success
@@ -154,12 +214,12 @@ const LoginForms: React.FC<LoginFormsProps> = ({ onForgotPasswordClick, onSignup
                     value: 4,
                     message: "Password must be at least 8 characters",
                   },
-                  // pattern: {
-                  //   value:
-                  //     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                  //   message:
-                  //     "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
-                  // },
+                  pattern: {
+                    value:
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                    message:
+                      "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+                  },
                 })}
                 onFocus={() => setFocusPassword(true)}
                 onBlur={() => setFocusPassword(false)}
@@ -249,7 +309,7 @@ const LoginForms: React.FC<LoginFormsProps> = ({ onForgotPasswordClick, onSignup
 
         {/* Submit Button */}
         {/* <button type="submit">Login</button> */}
-        {isPending ? (
+        {isLoading  ? (
           <div className="flex items-center justify-center gap-2">
           <Spinner size="sm" color="blue-500" />
           Logging in...

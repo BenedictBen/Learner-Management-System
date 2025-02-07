@@ -29,3 +29,18 @@ body {
     brightness(97%) 
     contrast(92%);
 }
+
+/* For browsers that support ::placeholder */
+input::placeholder {
+  color: #000 !important;
+  opacity: 1 !important;
+}
+
+/* Fallback for older browsers */
+input:-ms-input-placeholder {
+  color: #000 !important;
+}
+
+input::-ms-input-placeholder {
+  color: #000 !important;
+}

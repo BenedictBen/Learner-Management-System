@@ -1,3 +1,6 @@
+
+
+
 export type FormValues = {
   firstName: string;
   lastName: string;
@@ -7,12 +10,16 @@ export type FormValues = {
   gender: string;
   disabled: string;
   phone: string;
-  image: FileList | null;
+  image: string ;
   amount: number;
   description: string;
   password: string;
   newPassword: string;
   confirmPassword: string;
   oldPassword: string,
-  
+}
+
+export interface Course {
+  _id: string;
+  title: string;
 }

@@ -8,7 +8,7 @@ const HomePage = () => {
     <div className="home-container">
       <h1>Welcome to the Platform</h1>
       <div className="flex items-center justify-center flex-col">
-        <Link href="/admin" className="admin-link">
+        <Link href="/admin/signup" className="admin-link">
           Go to Admin Portal
         </Link>
         <Link href="/learner" className="learner-link">

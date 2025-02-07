@@ -5,8 +5,16 @@ import { FormValues } from "@/lib/types";
 import { FieldIcons } from "@/lib/FormsIcons";
 import { useState } from "react";
 import Image from "next/image";
+import { useRegisterCourse, useCourseList } from "@/hooks/learner/useAuth";
+import { Spinner, useToast } from "@chakra-ui/react";
+import { uploadImageToCloudinary } from "@/lib/cloudinary";
 
-const CourseRegisterModal = ({ onClose }: { onClose: () => void }) => {
+interface CourseRegister{
+  onClose: () => void;
+  onSuccess: () => void;
+}
+
+const CourseRegisterModal: React.FC<CourseRegister> = ({ onSuccess, onClose }) => {
   const [focus, setFocus] = useState<boolean>(false);
   const [focusFirstName, setFocusFirstName] = useState(false);
   const [focusLastName, setFocusLastName] = useState(false);
@@ -18,6 +26,13 @@ const CourseRegisterModal = ({ onClose }: { onClose: () => void }) => {
   const [focusUpload, setFocusUpload] = useState(false);
   const [focusAmount, setFocusAmount] = useState(false);
 
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
+
+  const toast = useToast();
+  const { mutate: registerCourse, isPending } = useRegisterCourse();
+  const { data: courses, isLoading: coursesLoading, error: coursesError } = useCourseList();
+
  const {
      handleSubmit,
      control,
@@ -26,22 +41,106 @@ const CourseRegisterModal = ({ onClose }: { onClose: () => void }) => {
      watch, clearErrors
    } = useForm<FormValues>();
    const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setImagePreview(URL.createObjectURL(file));
+      setImageFile(file);
+      setImageError(null);
+      clearErrors("image");
+    }
+   
+  };
+
  
-   const onSubmit = (data: FormValues) => {
-     console.log(data);
-   };
+  const onSubmit = async (formData: FormValues) => {
+    try {
+      // Validate image
+      if (!imageFile) {
+        setImageError("Image is required");
+        return;
+      }
+  
+      if (!(imageFile instanceof File)) {
+        setImageError("Invalid file type");
+        return;
+      }
+  
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (imageFile.size > maxSize) {
+        setImageError("File size exceeds the limit (5MB)");
+        return;
+      }
+  
+      const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+      if (!allowedTypes.includes(imageFile.type)) {
+        setImageError("Invalid file type (only JPEG, PNG, GIF allowed)");
+        return;
+      }
+
+      // Upload image to Cloudinary
+      const imageUrl = await uploadImageToCloudinary(imageFile);
+  
+      // Transform data to match API expectations
+      const apiData = {
+        firstname: formData.firstName.trim(),
+        lastname: formData.lastName.trim(),
+        email: formData.email.toLowerCase().trim(),
+        course: formData.chooseModule, // Should be course ID from fetched courses
+        gender: formData.gender,
+        location: formData.location.trim(),
+        phone: formData.phone.replace(/\D/g, ''), // Clean phone number
+       disability: formData.disabled === "true" ? "yes" : "no", // Match API boolean expectation
+        image: imageUrl,
+        description: formData.description.trim(),
+        amount: Number(formData.amount),
+      };
+  
+  
+      console.log('API Data:', apiData);
+      registerCourse(apiData, {
+        onSuccess: () => {
+          toast({
+            title: "Registration Successful",
+            description: "Course registration completed",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+          onClose();
+          onSuccess();
+        },
+
+        
+        onError: (error: any) => {
+          toast({
+            title: "Registration Failed",
+            description: error.message || "Please check your input and try again",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        },
+      });
+    } catch (error) {
+      console.error("Registration Error:", error); // Log the error for debugging
+      toast({
+        title: "Registration Error",
+        description: "An unexpected error occurred",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
  
    // Handle image preview
-   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-     const file = event.target.files?.[0];
-     if (file) {
-       setImagePreview(URL.createObjectURL(file));
-     }
-   };
+
 
   return (
     <div className="animate-fade-in px-4 sm:px-6 lg:px-8">
-      <div className="mt-1">
+      <div className="mt-1 md:mt-8">
         <h1 className="text-left text-lg md:text-center mb-8 md:text-2xl font-bold">Start a new application</h1>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-4xl mx-auto">
           {/* Input Grid */}
@@ -58,7 +157,7 @@ const CourseRegisterModal = ({ onClose }: { onClose: () => void }) => {
                 })}
                 onFocus={() => setFocusFirstName(true)} 
           onBlur={() => setFocusFirstName(false)} 
-                className={`border p-2 w-full  pr-10 pl-8 bg-[#E6E6E6] focus:border-casbBluePrimary focus:outline-none ${
+                className={`border p-3 w-full  pr-10 pl-8 bg-[#E6E6E6] focus:border-casbBluePrimary focus:outline-none rounded-lg ${
                   watch("firstName")
                     ? "border-green-500"
                     : errors.firstName
@@ -125,7 +224,7 @@ const CourseRegisterModal = ({ onClose }: { onClose: () => void }) => {
                 })}
                 onFocus={() => setFocusLastName(true)} 
           onBlur={() => setFocusLastName(false)} 
-                className={`border p-2 w-full pr-10 pl-8 bg-[#E6E6E6] focus:border-casbBluePrimary focus:outline-none ${
+                className={`border p-3 w-full pr-10 pl-8 bg-[#E6E6E6] focus:border-casbBluePrimary focus:outline-none rounded-lg ${
                   watch("lastName")
                     ? "border-green-500"
                     : errors.lastName
@@ -316,9 +415,15 @@ const CourseRegisterModal = ({ onClose }: { onClose: () => void }) => {
                   }`}
                 >
                   <option value="">Choose module</option>
-                  <option value="module1">Module 1</option>
-                  <option value="module2">Module 2</option>
-                  <option value="module3">Module 3</option>
+  {coursesLoading && <option disabled>Loading courses...</option>}
+  {coursesError && <option disabled>Error loading courses</option>}
+  
+  {/* Safe array mapping */}
+  {Array.isArray(courses) && courses.map((course) => (
+    <option key={course._id} value={course._id}>
+      {course.title}
+    </option>
+  ))}
                 </select>
                 <Image
                   src={FieldIcons.chooseModule as string}
@@ -414,9 +519,8 @@ const CourseRegisterModal = ({ onClose }: { onClose: () => void }) => {
                   }`}
                 >
                   <option value="">Disabled</option>
-                  <option value="option1">Option 1</option>
-                  <option value="option2">Option 2</option>
-                  <option value="option3">Option 3</option>
+                  <option value="true">Yes</option>
+                  <option value="false">No</option>
                 </select>
                 <Image
                   src={FieldIcons.disabled as string}
@@ -590,6 +694,9 @@ const CourseRegisterModal = ({ onClose }: { onClose: () => void }) => {
                           />
                         )}
             </div>
+            {imageError && (
+      <p className="text-red-500 text-sm mt-1 text-center">{imageError}</p>
+    )}
             {errors.image && (
               <p className="text-red-500 text-sm mt-1 text-center">
                 {errors.image.message}
@@ -732,7 +839,13 @@ const CourseRegisterModal = ({ onClose }: { onClose: () => void }) => {
               <Image src="/back.png" alt="Back" width={20} height={20} />
               Back
             </button>
-            
+            {isPending ? (
+              <div className="flex items-center justify-center gap-2 w-full bg-casbBluePrimary text-white py-2 rounded hover:bg-blue-600">
+                          <Spinner size="sm" color="blue-500" />
+                          <span>Registering...</span>
+                        </div>
+            ): (
+
             <button
               type="submit"
               className="flex items-center justify-center gap-2 w-full md:w-48 px-6 py-3 bg-casbBluePrimary text-white rounded-lg hover:bg-blue-600 transition-colors"
@@ -740,6 +853,7 @@ const CourseRegisterModal = ({ onClose }: { onClose: () => void }) => {
               Register
               <Image src="/chevron-right-white.png" alt="Submit" width={20} height={20} />
             </button>
+            )}
           </div>
         </form>
       </div>

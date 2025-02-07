@@ -6,8 +6,10 @@ import { useForm } from 'react-hook-form';
 import { useSignup } from "@/hooks/learner/useAuth"
 import { Spinner, useToast } from "@chakra-ui/react";
 import { useDispatch } from 'react-redux';
-import { setPendingEmail,setVerificationToken } from "@/features/authSlice";
-
+import { setPendingEmail,setTemporaryPassword,setVerificationToken } from "@/features/authSlice";
+import { handleGoogleSignIn } from '@/actions/auth-actions';
+import { signIn } from "next-auth/react";
+import { NextApiRequest, NextApiResponse } from 'next';
 
 interface SignupFormProps {
     onVerificationClick: () => void;
@@ -24,7 +26,7 @@ interface SignupFormProps {
       
         const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
-      
+       const [isLoading, setIsLoading] = useState(false);
 
       const togglePasswordVisibility = (): void => {
         setShowPassword(!showPassword);
@@ -45,7 +47,50 @@ interface SignupFormProps {
         formState: { errors },
         watch,
       } = useForm<FormValues>();
+
+
+      // const handleSignUp = async (data: FormValues) => {
+      //   setIsLoading(true);
+      //   try {
+      //     const result = await signIn('credentials', {
+      //             email: data.email,
+      //             password: data.password,
+      //             redirect: false,
+      //           });
+            
+      //           if (result?.error) {
+      //             let errorMessage = "Invalid email or password";
+      //             if (result.error === "CredentialsSignin") {
+      //               errorMessage = "Invalid email or password combination";
+      //             }
+      //             throw new Error(errorMessage);
+      //           }
+            
+      //           if (result?.ok) {
+      //             const { email, verificationToken } = result;
+      //       dispatch(setPendingEmail(email));
+      //       dispatch(setVerificationToken(verificationToken))
+      //       console.log('Stored email:', email);
+      // console.log('Stored verification token:', verificationToken);
+      //             onVerificationClick()
+      //           }
+      //   } catch(error: any){
+      //     toast({
+      //       title: "Login Failed",
+      //       description: error.message,
+      //       status: "error",
+      //       duration: 5000,
+      //       isClosable: true,
+      //     });
+      //   } finally {
+      //     setIsLoading(false);
+      //   }
+      // }
     
+
+
+
+
       const onSubmit = (data: FormValues): void => {
         const payload = {
           email: data.email,
@@ -57,11 +102,12 @@ interface SignupFormProps {
             const { email, verificationToken } = responseData.user;
             dispatch(setPendingEmail(email));
             dispatch(setVerificationToken(verificationToken))
+            dispatch(setTemporaryPassword(data.password)); 
             console.log('Stored email:', email);
       console.log('Stored verification token:', verificationToken);
             // Trigger verification modal
             onVerificationClick();
-          },
+          },  
           onError: (error) => {
             toast({
               title: "Login Failed",
@@ -89,7 +135,9 @@ interface SignupFormProps {
                 <div className="flex items-center justify-center mb-2">
                   <div className="border border-casbBluePrimary w-80 mx-auto py-1 flex items-center justify-center gap-1 ">
                     <Image src="/Google.png" alt="google" width={15} height={15} />
-                    <button>Signup using Google</button>
+                    <form action={handleGoogleSignIn}>
+                      <button>Signup using Google</button>
+                    </form>
                   </div>
                 </div>
                 <p className="text-center my-1 text-black">or</p>

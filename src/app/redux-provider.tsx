@@ -3,6 +3,7 @@
 import { Provider } from "react-redux";
 import { store } from "../lib/store";
 import { AuthInitializer } from "@/features/AuthInitializer"
+import { SessionProvider } from "next-auth/react";
 
 export default function ReduxProvider({
   children,
@@ -10,9 +11,13 @@ export default function ReduxProvider({
   children: React.ReactNode;
 }) {
   return <Provider store={store}>
+    <SessionProvider>
+
     <AuthInitializer>
     {children}
     </AuthInitializer>
+
+    </SessionProvider>
     </Provider>;
 }
 
