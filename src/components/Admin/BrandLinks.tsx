@@ -6,7 +6,7 @@ import { AiFillLinkedin, AiFillGithub } from "react-icons/ai";
 
 export function BrandLinks() {
   return (
-    <div className="flex items-center justify-center gap-6 py-4">
+    <div className="flex items-center justify-center gap-6 py-4 cursor-pointer">
       {/* Main Logo Link */}
       <Link
         href="

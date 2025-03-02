@@ -3,12 +3,14 @@
 
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState, AppDispatch } from "@/redux/store";
+import { RootState, AppDispatch } from "@/lib/store";
 import { loadSession, signin } from "@/features/authSlice";
 import { Avatar } from "@chakra-ui/react";
 import Image from "next/image";
+import { useForm } from "react-hook-form";
+import { FormValues } from "@/lib/types";
 
-const UserDetails = () => {
+const AdminDetails = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { user, loading } = useSelector((state: RootState) => state.auth);
   const admin = user?.role === "admin" ? user : null;
@@ -84,6 +86,12 @@ const UserDetails = () => {
     setIsEditing(false);
   };
 
+  const {
+   
+    formState: { errors },
+    watch,
+  } = useForm<FormValues>({});
+
   if (loading) return <div className="text-center p-4">Loading...</div>;
   if (!admin)
     return <div className="text-center p-4 text-red-500">Unauthorized</div>;
@@ -92,7 +100,7 @@ const UserDetails = () => {
     <div className="w-full py-4">
       <div className="px-2 lg:px-6 py-6 md:py-0">
         {/* Profile Picture Section */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 w-full px-2 lg:px-6 py-6 md:py-0 bg-casbGreyBorder md:bg-white">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 w-full px-2 lg:px-6 py-6 md:py-0 bg-casbGreyBorder dark:bg-black md:bg-white">
           <div className="flex items-center flex-col md:flex-row gap-4 w-full md:w-auto flex-1">
             {imagePreview ? (
               <div className="relative w-24 h-24 rounded-full overflow-hidden">
@@ -142,8 +150,8 @@ const UserDetails = () => {
         <form className="space-y-6">
           {/* Full Name */}
           <div className="py-4">
-            <span className="py-2 block">Full name</span>
-            <div className="bg-casbGreyBorder py-4 px-4">
+            <span className=" block">Full name</span>
+            <div className="bg-casbGreyBorder dark:bg-black py-4 px-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="relative">
                   <input
@@ -152,7 +160,14 @@ const UserDetails = () => {
                     value={localUser.firstName}
                     onChange={handleChange}
                     readOnly={!isEditing}
-                    className="p-2 w-full pr-10 pl-8 bg-white border-b-2 focus:border-casbBluePrimary focus:outline-none rounded-sm border-casbBluePrimary"
+                    className={`w-full p-2 pl-8 pr-0 border-b-2 ${
+                      errors.firstName
+                        ? "!bg-red-100 border-gray-300"
+                        : watch("firstName")
+                       ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
+                          : "border-casbBluePrimary bg-white dark:bg-black dark:text-white"
+                    } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300`}
+                  
                   />
                 </div>
                 <div className="relative">
@@ -162,8 +177,15 @@ const UserDetails = () => {
                     value={localUser.lastName}
                     onChange={handleChange}
                     readOnly={!isEditing}
-                    className="p-2 w-full pr-10 pl-8 bg-white border-b-2 focus:border-casbBluePrimary focus:outline-none rounded-sm border-casbBluePrimary"
-                  />
+                    className={`w-full p-2 pl-8 pr-0 border-b-2 ${
+                      errors.lastName
+                        ? "!bg-red-100 border-gray-300"
+                        : watch("lastName")
+                       ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
+                          : "border-casbBluePrimary bg-white dark:bg-black dark:text-white"
+                    } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300`}
+                  
+                 />
                 </div>
               </div>
             </div>
@@ -175,7 +197,7 @@ const UserDetails = () => {
               <span className="pb-2 block">Email</span>
               <p className="text-sm text-gray-600">Manage account email address</p>
             </div>
-            <div className="bg-casbGreyBorder py-4 px-4">
+            <div className="bg-casbGreyBorder dark:bg-black py-4 px-4">
               <div className="relative">
                 <input
                   type="email"
@@ -183,7 +205,14 @@ const UserDetails = () => {
                   value={localUser.email}
                   onChange={handleChange}
                   readOnly={!isEditing}
-                  className="border-b-2 p-2 w-full pr-10 pl-10 bg-white focus:border-casbBluePrimary focus:outline-none rounded-sm border-casbBluePrimary"
+                  className={`w-full p-2 pl-10 pr-10 border-b-2 ${
+                    errors.email
+                      ? "!bg-red-100 border-gray-300"
+                      : watch("email")
+                     ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
+                        : "border-casbBluePrimary bg-white dark:bg-black dark:text-white"
+                  } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300 appearance-none`}
+                
                 />
               </div>
             </div>
@@ -194,7 +223,7 @@ const UserDetails = () => {
             <div className="py-4">
               <span className="pb-2 block">Contact</span>
             </div>
-            <div className="bg-casbGreyBorder py-4 px-4">
+            <div className="bg-casbGreyBorder dark:bg-black py-4 px-4">
               <div className="relative">
                 <input
                   type="tel"
@@ -202,7 +231,14 @@ const UserDetails = () => {
                   value={localUser.contact}
                   onChange={handleChange}
                   readOnly={!isEditing}
-                  className="border-b-2 p-2 w-full pr-10 pl-10 bg-white focus:border-casbBluePrimary focus:outline-none rounded-sm border-casbBluePrimary"
+                  className={`w-full p-2 pl-10 pr-10 border-b-2 ${
+                    errors.contact
+                      ? "!bg-red-100 border-gray-300"
+                      : watch("contact")
+                     ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
+                        : "border-casbBluePrimary bg-white dark:bg-black dark:text-white"
+                  } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300 appearance-none`}
+                
                 />
               </div>
             </div>
@@ -214,7 +250,7 @@ const UserDetails = () => {
               <span className="pb-2 block">Password</span>
               <p className="text-sm text-gray-600">Modify your current password</p>
             </div>
-            <div className="bg-casbGreyBorder py-4 px-4">
+            <div className="bg-casbGreyBorder dark:bg-black py-4 px-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Current Password */}
                 <div className="relative">
@@ -225,7 +261,14 @@ const UserDetails = () => {
                       value={localPassword}
                       onChange={(e) => setLocalPassword(e.target.value)}
                       readOnly={!isEditing}
-                      className="w-full p-2 pl-8 pr-16 border-b-2 bg-white focus:border-casbBluePrimary focus:outline-none rounded-sm border-casbBluePrimary"
+                      className={`w-full p-2 pl-10 pr-16 border-b-2 ${
+                        errors.password
+                          ? "!bg-red-100 border-gray-300"
+                          : watch("password")
+                         ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
+                            : "border-casbBluePrimary bg-white dark:bg-black dark:text-white"
+                      } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300 appearance-none`}
+                    
                     />
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex gap-2 items-center">
                       <div
@@ -251,7 +294,14 @@ const UserDetails = () => {
                       value={localNewPassword}
                       onChange={(e) => setLocalNewPassword(e.target.value)}
                       readOnly={!isEditing}
-                      className="w-full p-2 pl-8 pr-16 border-b-2 bg-white focus:border-casbBluePrimary focus:outline-none rounded-sm border-casbBluePrimary"
+                      className={`w-full p-2 pl-10 pr-16 border-b-2 ${
+                        errors.newPassword
+                          ? "!bg-red-100 border-gray-300"
+                          : watch("newPassword")
+                         ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
+                            : "border-casbBluePrimary bg-white dark:bg-black dark:text-white"
+                      } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300 appearance-none`}
+                    
                     />
                     <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex gap-2 items-center">
                       <div
@@ -295,7 +345,7 @@ const UserDetails = () => {
               <button
                 type="button"
                 onClick={handleEdit}
-                className="w-full bg-casbBluePrimary text-white p-2 rounded-sm hover:bg-casbBlueHover transition-colors duration-300 w-full md:w-44"
+                className="w-full bg-casbBluePrimary text-white p-2 rounded-sm hover:bg-casbBlueHover transition-colors duration-300 md:w-44"
               >
                 Edit Profile
               </button>
@@ -307,4 +357,4 @@ const UserDetails = () => {
   );
 };
 
-export default UserDetails;
+export default AdminDetails;

@@ -72,12 +72,7 @@ export default function TableLearner({ learners, loading, error }: TableLearnerP
     setEditingLearner(null);
   };
   
-  const handleDeleted = (learnerId: string) => {
-    // Dispatch async deletion
-    dispatch(deleteLearnerAsync(learnerId));
-    // Close modal
-    setDeletingLearner(null);
-  };
+ 
 
   if (error) return <div>Error: {error}</div>;
 
@@ -210,7 +205,7 @@ export default function TableLearner({ learners, loading, error }: TableLearnerP
       {/* Pagination */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0 mt-8">
         <div className="flex flex-row items-center gap-2 text-sm text-muted-foreground">
-          <div className="bg-casbGreyPrimary px-3 py-3 rounded-md">
+          <div className="bg-casbGreyPrimary dark:bg-black px-3 py-3 rounded-md">
             <button
               onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
@@ -227,13 +222,13 @@ export default function TableLearner({ learners, loading, error }: TableLearnerP
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="bg-casbGreyPrimary px-3 py-3 rounded-md">
+            <div className="bg-casbGreyPrimary dark:bg-black px-3 py-3 rounded-md">
               <span className="text-gray-400 text-lg">{currentPage}</span>
             </div>
             <p>{`${currentPage} of ${totalPages}`}</p>
           </div>
 
-          <div className="bg-casbGreyPrimary px-3 py-3 rounded-md">
+          <div className="bg-casbGreyPrimary dark:bg-black px-3 py-3 rounded-md">
             <button
               onClick={() => setCurrentPage(currentPage + 1)}
               disabled={currentPage >= totalPages}
@@ -253,7 +248,7 @@ export default function TableLearner({ learners, loading, error }: TableLearnerP
         <div className="flex items-center justify-end md:justify-start gap-2">
           <div className="flex items-center justify-center gap-2 px-3 py-2 rounded-md w-full md:w-auto">
             <p>Results per page</p>
-            <p className="flex items-center justify-center gap-2 bg-casbGreyPrimary px-2 py-2 rounded-md">
+            <p className="flex items-center justify-center gap-2 bg-casbGreyPrimary dark:bg-black px-2 py-2 rounded-md">
               {itemsPerPage}
               <button
                 onClick={() =>

@@ -104,8 +104,6 @@ export default function TableInvoices({
     // Look for a learner with an _id matching invoice.learnerID.
     const learner = learners.find((l) => l._id === invoice.learnerID);
 
-    // Debug logging to see the matching result.
-    // console.log(`Invoice ${invoice._id} - learner found:`, learner);
 
     return {
       formatted: {
@@ -257,7 +255,7 @@ export default function TableInvoices({
                         </button>
                       </TableCell>
                       <TableCell className="py-4 px-6">
-                        <div className="flex items-center justify-center gap-2 w-10 h-10">
+                        <div className="flex items-center justify-center gap-2 w-10 h-10 cursor-pointer">
                           <Image
                             src="/edit.png"
                             width={30}

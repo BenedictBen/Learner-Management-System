@@ -3,13 +3,14 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { Learner } from "@/lib/types"; // Ensure this matches your Learner type
+import { FormValues, Learner } from "@/lib/types"; // Ensure this matches your Learner type
 import { useCourseList } from "@/hooks/learner/useAuth";
 import { AppDispatch } from "@/lib/store";
 import { updateLearnerAsync } from "@/features/learnerSlice";
 import { useDispatch } from "react-redux";
 import { uploadImageToCloudinary } from "@/lib/cloudinary";
 import { FieldIcons } from "@/lib/FormsIcons";
+import { useForm } from "react-hook-form";
 
 // Example FieldIcons – adjust or import these from your icons file
 
@@ -117,19 +118,33 @@ export default function LearnerEditor({
     setUpdateRequested(true);
   };
 
+
+  const {
+   
+    formState: { errors },
+    watch,
+  } = useForm<FormValues>({});
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
-      <div className="bg-white p-6 rounded-md w-full max-w-md">
+      <div className="bg-white dark:bg-black p-6 rounded-md w-full max-w-md">
         <h2 className="text-xl font-bold mb-4">Edit Learner</h2>
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
+          <div className="mb-4 dark:bg-black">
             <label className="block mb-1">Amount</label>
             <input
               type="number"
               value={amount}
               onChange={(e) => setAmount(Number(e.target.value))}
-              className="w-full border p-2 rounded"
               required
+              className={`w-full p-2 pl-10 pr-8 border-b-2 ${
+                errors.amount
+                  ? "!bg-red-100 border-gray-300"
+                  : watch("amount")
+                 ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
+                    : "border-casbBluePrimary bg-white dark:bg-black dark:text-white"
+              } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300`}
+           
             />
           </div>
           <div className="mb-4">
@@ -142,8 +157,15 @@ export default function LearnerEditor({
               <select
                 value={course}
                 onChange={(e) => setCourse(e.target.value)}
-                className="w-full border p-2 rounded"
                 required
+                className={`w-full p-2 pl-10 pr-8 border-b-2 ${
+                  errors.course
+                    ? "!bg-red-100 border-gray-300"
+                    : watch("course")
+                   ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
+                      : "border-casbBluePrimary bg-white dark:bg-black dark:text-white"
+                } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300 appearance-none`}
+             
               >
                 <option value="">Select Program</option>
                 {Array.isArray(coursesData) &&
@@ -159,10 +181,10 @@ export default function LearnerEditor({
             <div
               className={`relative flex items-center border-b-2 p-3 bg-white rounded-sm cursor-pointer appearance-none ${
                 imageError
-                  ? "border-red-500"
-                  : imagePreview
-                  ? "border-green-500"
-                  : "border-casbBluePrimary"
+                ? "!bg-red-100 border-gray-300"
+                : imagePreview
+                ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
+                : "border-casbBluePrimary bg-white dark:bg-black dark:text-white"
               }`}
             >
               <label
@@ -191,7 +213,7 @@ export default function LearnerEditor({
                     }}
                   />
                 )}
-                <span className="text-gray-700">
+                <span className="text-gray-700 dark:text-white">
                   {imagePreview ? "Change Image" : "Upload Image"}
                 </span>
               </label>
@@ -234,14 +256,14 @@ export default function LearnerEditor({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-300 rounded"
+              className="px-4 py-2 bg-gray-300 dark:bg-black border-b-2 border-casbBluePrimary rounded"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 bg-blue-500 text-white rounded"
+              className="px-4 py-2 bg-casbBluePrimary text-white rounded"
             >
               {loading ? "Updating..." : "Update"}
             </button>

@@ -180,7 +180,7 @@ const LearnerForms = ({ onClose }: LearnerFormProps) => {
                         ? "!bg-red-100 border-gray-300"
                         : watch("firstName")
                        ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
-                          : "border-blue-500 bg-white dark:bg-black dark:text-white"
+                          : "border-casbBluePrimary bg-white dark:bg-black dark:text-white"
                     } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300`}
                   
                   />
@@ -251,7 +251,7 @@ const LearnerForms = ({ onClose }: LearnerFormProps) => {
                         ? "!bg-red-100 border-gray-300"
                         : watch("lastName")
                        ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
-                          : "border-blue-500 bg-white dark:bg-black dark:text-white"
+                          : "border-casbBluePrimary bg-white dark:bg-black dark:text-white"
                     } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300`}
                   
                   />
@@ -320,7 +320,7 @@ const LearnerForms = ({ onClose }: LearnerFormProps) => {
                       ? "!bg-red-100 border-gray-300"
                       : watch("email")
                      ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
-                        : "border-blue-500 bg-white dark:bg-black dark:text-white"
+                        : "border-casbBluePrimary bg-white dark:bg-black dark:text-white"
                   } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300`}
                 
                 />
@@ -380,7 +380,7 @@ const LearnerForms = ({ onClose }: LearnerFormProps) => {
                         ? "!bg-red-100 border-gray-300"
                         : watch("chooseModule")
                        ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
-                          : "border-blue-500 bg-white dark:bg-black dark:text-white"
+                          : "border-casbBluePrimary bg-white dark:bg-black dark:text-white"
                     } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300 appearance-none`}
                  
                  >
@@ -441,7 +441,7 @@ const LearnerForms = ({ onClose }: LearnerFormProps) => {
                         ? "!bg-red-100 border-gray-300"
                         : watch("gender")
                        ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
-                          : "border-blue-500 bg-white dark:bg-black dark:text-white"
+                          : "border-casbBluePrimary bg-white dark:bg-black dark:text-white"
                     } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300 appearance-none`}
                  
                   >
@@ -496,7 +496,7 @@ const LearnerForms = ({ onClose }: LearnerFormProps) => {
                         ? "!bg-red-100 border-gray-300"
                         : watch("location")
                        ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
-                          : "border-blue-500 bg-white dark:bg-black dark:text-white"
+                          : "border-casbBluePrimary bg-white dark:bg-black dark:text-white"
                     } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300`}
                   />
                   {FieldIcons.location && (
@@ -562,7 +562,7 @@ const LearnerForms = ({ onClose }: LearnerFormProps) => {
                         ? "!bg-red-100 border-gray-300"
                         : watch("phone")
                        ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
-                          : "border-blue-500 bg-white dark:bg-black dark:text-white"
+                          : "border-casbBluePrimary bg-white dark:bg-black dark:text-white"
                     } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300`}
                   />
                   <Image
@@ -620,8 +620,9 @@ const LearnerForms = ({ onClose }: LearnerFormProps) => {
                       ? "!bg-red-100 border-gray-300"
                       : watch("disabled")
                      ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
-                        : "border-blue-500 bg-white dark:bg-black dark:text-white"
+                        : "border-casbBluePrimary bg-white dark:bg-black dark:text-white"
                   } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300 appearance-none`}
+                
                 >
                   <option value="">Disabled</option>
                   <option value="true">Yes</option>
@@ -677,9 +678,10 @@ const LearnerForms = ({ onClose }: LearnerFormProps) => {
                       ? "!bg-red-100 border-gray-300"
                       : watch("amount")
                      ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
-                        : "border-blue-500 bg-white dark:bg-black dark:text-white"
+                        : "border-casbBluePrimary bg-white dark:bg-black dark:text-white"
                   } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300`}
-                />
+               
+               />
                 <Image
                   src={FieldIcons.amount as string}
                   alt="Amount"

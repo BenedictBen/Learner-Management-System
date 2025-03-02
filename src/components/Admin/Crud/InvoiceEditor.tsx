@@ -2,7 +2,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Invoice } from "@/lib/types"; // Ensure this matches your Invoice type
+import { FormValues, Invoice } from "@/lib/types"; // Ensure this matches your Invoice type
+import { useForm } from "react-hook-form";
 
 function hasErrorProperties(value: unknown): value is { name: string; message: string } {
   return (
@@ -79,10 +80,16 @@ export default function InvoiceEditor({
     updateInvoice();
   }, [updateRequested, amount, status, invoice._id, onUpdated, onClose]);
 
+    const {
+     
+      formState: { errors },
+      watch,
+    } = useForm<FormValues>({});
+
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
-      <div className="bg-white p-6 rounded-md w-full max-w-md">
+      <div className="bg-white dark:bg-black p-6 rounded-md w-full max-w-md">
         <h2 className="text-xl font-bold mb-4">Edit Invoice</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -91,7 +98,14 @@ export default function InvoiceEditor({
               type="number"
               value={amount}
               onChange={(e) => setAmount(Number(e.target.value))}
-              className="w-full border p-2 rounded"
+              className={`w-full p-2 pl-10 pr-8 border-b-2 ${
+                errors.amount
+                  ? "!bg-red-100 border-gray-300"
+                  : watch("amount")
+                 ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
+                    : "border-casbBluePrimary bg-white dark:bg-black dark:text-white"
+              } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300`}
+           
               required
             />
           </div>
@@ -100,7 +114,13 @@ export default function InvoiceEditor({
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="w-full border p-2 rounded"
+              className={`w-full p-2 pl-10 pr-8 border-b-2 ${
+                errors.status
+                  ? "!bg-red-100 border-gray-300"
+                  : watch("status")
+                 ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
+                    : "border-casbBluePrimary bg-white dark:bg-black dark:text-white"
+              } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300 appearance-none`}
               required
             >
               <option value="pending">Pending</option>
@@ -112,14 +132,14 @@ export default function InvoiceEditor({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-300 rounded"
+              className="px-4 py-2 bg-gray-300 dark:bg-black border-b-2 border-casbBluePrimary rounded"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 bg-blue-500 text-white rounded"
+              className="px-4 py-2 bg-casbBluePrimary text-white rounded"
             >
               {loading ? "Updating..." : "Update"}
             </button>

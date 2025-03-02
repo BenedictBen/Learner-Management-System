@@ -1,31 +1,14 @@
 "use client"
 
 import * as React from "react"
-import {
-  SquareTerminal,
-} from "lucide-react"
-
-import { NavMain } from "@/components/nav-main"
 
 import {
   Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import Image from "next/image"
-import { logout } from "@/features/authSlice";
 import { usePathname } from "next/navigation";
-import { handleGoogleSignOut } from "@/actions/auth-actions";
-import { clearCourseState } from "@/features/courseSlice";
-import { useDispatch } from "react-redux";
-import { useRouter } from "next/navigation";
-import { signOut } from "next-auth/react"
 import { useLogout } from "@/hooks/admin/useAuth"
 
 
@@ -121,11 +104,9 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
-  const [hoveredItem, setHoveredItem] = React.useState<string | null>(null);
 
-    const dispatch = useDispatch();
+    
     const { mutate: logoutMutation } = useLogout();
-      const router = useRouter();
     
   
       const handleLogout = async () => {
