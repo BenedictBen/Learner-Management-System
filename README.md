@@ -1,36 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Learner Management System
+
+A robust learner management system built with [Next.js](https://nextjs.org/) and styled using [Tailwind CSS](https://tailwindcss.com/). 
+
+![Admin Home Page](/AdminHomePage.png)
+![Learner Home Page](/LearnerHomePage.png)
+
+
+## Features
+
+- **User Authentication:** Secure login and registration for learners and administrators. Includes support for role-based access control (RBAC) to ensure data privacy and security.
+
+- **Google Sign-up/Sign-in**: Learners can conveniently sign up or log in using their Google accounts.
+**Sign-Up Verification**: Enhanced security with sign-up authentication for learner and admin accounts to protect sensitive data.
+ 
+- **Admin Controls**:
+- **Empower administrators with robust management tools**:
+
+ - **Learner Management* : Admins can create, update, and delete learner profiles as needed.
+
+- *Invoice Management*: Admins can generate, track, and manage invoices for paid courses. Easily monitor payment statuses (Paid/Pending) and resolve discrepancies.
+
+- *Course Management*: Admins can generate, track, create and manage courses for paid courses. 
+
+- **Responsive Design:** Fully responsive UI for a seamless experience on desktop and mobile devices.
+
+
+## Technologies Used
+
+- **Next.js:** For building a fast and SEO-friendly web application.
+- **Tailwind CSS:** For modern, utility-first styling.
+- **Shadcn:** For Dashboard, utility-first styling.
+- **React:** For building interactive UI components.
+- **Other Tools/Libraries:** ( Redux Toolkit, NextAuth, React Query.)
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node.js (v14 or later)
+- npm or yarn
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Clone the Repository**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```bash
+   git clone https://github.com/benedictben/lms-g-client.git
+   cd learner-management-system
+   ```
 
-## Learn More
+2. **Install Dependencies**
 
-To learn more about Next.js, take a look at the following resources:
+   Using npm:
+   ```bash
+   npm install
+   ```
+   Or using yarn:
+   ```bash
+   yarn install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. **Configure Environment Variables**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   Create a `.env.local` file at the root of your project and add the required environment variables. 
+  
 
-## Deploy on Vercel
+4. **Run the Development Server**
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   Using npm:
+   ```bash
+   npm run dev
+   ```
+   Or using yarn:
+   ```bash
+   yarn dev
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
+
+## Deployment
+
+You can deploy this Next.js application on platforms like [Vercel](https://vercel.com/) or [Netlify](https://www.netlify.com/). Follow the respective guides for deploying Next.js applications.
+
+## Contributing
+
+Contributions are welcome! Please read the [contribution guidelines](CONTRIBUTING.md) for more information on how to contribute to this project.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+For questions or feedback, please contact [benbenedict26@yahoo.com](mailto:benbenedict26@yahoo.com).
+
+---
+
