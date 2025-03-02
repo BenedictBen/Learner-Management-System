@@ -2,8 +2,8 @@
 
 A robust learner management system built with [Next.js](https://nextjs.org/) and styled using [Tailwind CSS](https://tailwindcss.com/). 
 
-![Admin Home Page](./public/AdminHomePage.png)
-![Learner Home Page](./public/LearnerHomePage.png)
+![Admin Home Page](/public/AdminHomePage.png)
+![Learner Home Page](/public/LearnerHomePage.png)
 
 
 ## Features
