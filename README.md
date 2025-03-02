@@ -47,7 +47,7 @@ public/AdminHomePage.png
 
    ```bash
    git clone https://github.com/benedictben/lms-g-client.git
-   cd learner-management-system
+   cd lms-g-client
    ```
 
 2. **Install Dependencies**
