@@ -18,6 +18,7 @@ import { RootState } from "@/lib/store";
 import { logout } from "@/features/authSlice";
 import { usePathname } from "next/navigation";
 import { handleGoogleSignOut } from "@/actions/auth-actions";
+import { clearCourseState } from "@/features/courseSlice";
 
 const HomeNavbar = () => {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
@@ -40,7 +41,7 @@ const HomeNavbar = () => {
 
     // Dispatch Redux logout action
     dispatch(logout());
-
+    dispatch(clearCourseState());
     // Redirect to learner page
     router.push("/learner");
   };
@@ -185,27 +186,23 @@ const HomeNavbar = () => {
               </MenuList>
             </Menu>
           ) : (
-            <div className="hidden md:flex relative border-casbSeaBlueSecondary border rounded-sm active:bg-casbHover hover:bg-casbHover group">
-              <div className="flex gap-2 py-2 px-5 items-center group">
-                <LoginModal />
-                <div className="relative group overflow-hidden m-0 ">
-                  <Image
-                    src="/log-in-blue.svg"
-                    alt="log-in-blue"
-                    width={20}
-                    height={15}
-                    className="object-fill transition-opacity duration-300 group-hover:opacity-0 "
-                  />
-                  <Image
-                    src="/log-in-white.svg"
-                    alt="log-in-white"
-                    width={20}
-                    height={15}
-                    className="absolute inset-0 object-fill transition-opacity duration-300 opacity-0 group-hover:opacity-100 "
-                  />
-                </div>
-              </div>
-            </div>
+<div className="hidden md:flex relative border-casbSeaBlueSecondary border rounded-sm hover:bg-casbBlueHover group transition-all duration-300">
+  <div className="flex gap-2 py-2 px-5 items-center">
+    <LoginModal />
+    <div className="relative m-0 w-[20px] h-[15px]">
+      {/* SVG Image with Color Transformation */}
+      <Image
+        src="/log-in.png"
+        alt="log-in"
+        width={20}
+        height={15}
+        className="absolute inset-0 transition-all duration-300 
+          [filter:invert(24%)_sepia(76%)_saturate(4157%)_hue-rotate(189deg)_brightness(95%)_contrast(102%)] 
+          group-hover:[filter:contrast(0)_brightness(1000%)]"
+      />
+    </div>
+  </div>
+</div>
           )}
         </div>
 

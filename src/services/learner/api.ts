@@ -9,7 +9,6 @@ const handleResponse = async (response: Response) => {
     const data = await response.json();
     
     if (!response.ok) {
-      // Handle different error structures
       const errorMessage = data.error?.message || 
                           data.message || 
                           `HTTP error! status: ${response.status}`;
@@ -22,16 +21,6 @@ const handleResponse = async (response: Response) => {
     throw new Error("Failed to process server response");
   }
 };
-
-// const handleResponse = async (response: Response): Promise<any> => {
-//   const data = await response.json();
-
-//   if (!response.ok) {
-//     throw new Error(data.message || `HTTP error! status: ${response.status}`);
-//   }
-
-//   return data;
-// };
 
 
 export const signup = async (data: {
@@ -57,25 +46,6 @@ export const signup = async (data: {
   return responseData;
 };
 
-
-
-
-
-
-
-// export const otpVerify = async (token: string): Promise<{ 
-//   User: { 
-//     email: string; 
-//     _id: string 
-//   } 
-// }> => {
-//   const response = await fetch(`${BASE_URL}/user/auth/verify-email`, {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify({ token }), // Send only the token
-//   });
-//   return handleResponse(response);
-// };
 
 
 export const otpVerify = async (token: string) => {
@@ -161,7 +131,7 @@ export const registerCourse = async (data: any): Promise<void> => {
   });
   if (!response.ok) {
     const errorData = await response.json();
-    console.error("Server response:", errorData); 
+
     throw new Error("Failed to create course");
   }
     const responseData = await handleResponse(response);

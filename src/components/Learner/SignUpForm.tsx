@@ -8,8 +8,7 @@ import { Spinner, useToast } from "@chakra-ui/react";
 import { useDispatch } from 'react-redux';
 import { setPendingEmail,setTemporaryPassword,setVerificationToken } from "@/features/authSlice";
 import { handleGoogleSignIn } from '@/actions/auth-actions';
-import { signIn } from "next-auth/react";
-import { NextApiRequest, NextApiResponse } from 'next';
+
 
 interface SignupFormProps {
     onVerificationClick: () => void;
@@ -152,10 +151,10 @@ interface SignupFormProps {
                                 placeholder="Email"
                                 {...register("email", {
                                   required: "Email is required",
-                                  // pattern: {
-                                  //   value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                                  //   message: "Invalid email address",
-                                  // },
+                                  pattern: {
+                                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                                    message: "Invalid email address",
+                                  },
                                 })}
                                 onFocus={() => setFocusEmail(true)}
                                 onBlur={() => setFocusEmail(false)}
@@ -286,7 +285,7 @@ interface SignupFormProps {
               {/* Toggle Password Visibility Icon */}
               <div
                 onClick={togglePasswordVisibility}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                className="absolute right-8 top-1/2 transform -translate-y-1/2 cursor-pointer"
               >
                 <Image
                   src={
@@ -371,7 +370,7 @@ interface SignupFormProps {
               {/* Toggle Password Visibility Icon */}
               <div
                 onClick={toggleConfirmPasswordVisibility}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                className="absolute right-8 top-1/2 transform -translate-y-1/2 cursor-pointer"
               >
                 <Image
                   src={
@@ -402,7 +401,7 @@ interface SignupFormProps {
         ) : (
           <button
             type="submit"
-            className="w-full bg-casbBluePrimary text-white py-2 rounded flex items-center justify-center gap-2 hover:bg-blue-600"
+            className="w-full bg-casbBluePrimary text-white py-2 rounded flex items-center justify-center gap-2 hover:bg-casbBlueHover"
           >
             Register
             <Image src="/chevron-right-white.png" alt="chevron" width={20} height={20} />

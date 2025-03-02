@@ -1,5 +1,5 @@
 "use client";
-import HomeNavbar from "@/components/Learner/HomeNavbar";
+import HomeNavbar from "@/components/Learner/LearnerNavbar";
 import LearnerFooter from "@/components/Learner/LearnerFooter";
 import LearnerHero from "@/components/Learner/LearnerHero";
 import LearnerNextStep from "@/components/Learner/LearnerNextStep";

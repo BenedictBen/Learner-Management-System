@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useSelector, shallowEqual } from "react-redux";
 import { RootState } from "@/lib/store";
 import { Spinner } from "@chakra-ui/react";
-import { signIn } from "next-auth/react";
+
 
 interface VerificationCodeProps {
   onClose: () => void;
@@ -54,10 +54,7 @@ const OtpVerification: React.FC<VerificationCodeProps> = ({
       return;
     }
 
-    // if (!userEmail) {
-    //   setError("No email associated with this verification");
-    //   return;
-    // }
+
     
 
     verifyOtp(fullCode.trim());
@@ -76,7 +73,7 @@ const OtpVerification: React.FC<VerificationCodeProps> = ({
             {pendingUserEmail || storedEmail || "your email"}
           </p>
         </span>
-        <p className="text center text-black">
+        <p className="text center text-red.500 mx-auto">
           {verificationToken || storedToken || "your code"}
         </p>
       </div>
@@ -115,14 +112,14 @@ const OtpVerification: React.FC<VerificationCodeProps> = ({
 
         {/* Verify Button */}
         {isPending ? (
-          <div className="flex items-center justify-center hover:bg-blue-600 cursor-pointer mb-4 text-white py-2 rounded bg-casbBluePrimary">
+          <div className="flex items-center justify-center hover:bg-casbBlueHover cursor-pointer mb-4 text-white py-2 rounded bg-casbBluePrimary">
             <Spinner size="sm" color="blue-500" />
             <span>Verifying...</span>
           </div>
         ) : (
           <button
             type="submit"
-            className="w-full bg-casbBluePrimary text-white py-2 rounded flex items-center justify-center gap-2 hover:bg-blue-600"
+            className="w-full bg-casbBluePrimary text-white py-2 rounded flex items-center justify-center gap-2 hover:bg-casbBlueHover"
           >
             Verify account
             <Image

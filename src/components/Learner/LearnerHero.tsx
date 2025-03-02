@@ -18,6 +18,7 @@ const LearnerHero = () => {
                 </p>
                 <div className='text-left border-"#E6EFF5" border rounded-sm w-28 mt-1'>
                     <button className='py-2 px-3 text-center text-sm'>Get started</button>
+                
                 </div>
             </div>
             <div className=''>

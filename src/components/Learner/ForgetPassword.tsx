@@ -119,7 +119,7 @@ const ForgetPassword: React.FC<ForgetPasswordProps> = ({ onClose, onResetPasswor
           </div>
         </div>
 
-        <div className='flex items-center justify-center hover:bg-blue-600 cursor-pointer text-white py-2 rounded w-full bg-casbBluePrimary'>
+        <div className='flex items-center justify-center hover:bg-casbBlueHover cursor-pointer text-white py-2 rounded w-full bg-casbBluePrimary'>
           <button type="submit" className=" ">Forget password</button>
           <Image src="/chevron-right-white.png" alt="chevron" width={20} height={20} className="text-white"/>
         </div>

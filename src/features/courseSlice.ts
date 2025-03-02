@@ -1,46 +1,40 @@
 
+// import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+// export interface CourseDetails {
+//   program: string;
+//   dateRegistered: string;
+//   status: string;
+//   amountPaid: number;
+//   firstname: string;
+//   lastname: string;
+//   email: string;
+//   gender: string;
+//   location: string;
+//   phone: string;
+//   image: string;
+// }
+
+// interface CourseState {
+//   hasCreatedCourse: boolean;
+//   courseDetails: CourseDetails | null;
+// }
 
 
-// features/course/courseSlice.ts
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-interface CourseDetails {
-  program: string;
-  dateRegistered: string;
-  status: string;
-  amountPaid: number;
-}
-
-interface CourseState {
-  hasCreatedCourse: boolean;
-  courseDetails: CourseDetails | null;
-}
-
-// Explicit return type and safer initialization
-// const getInitialCourseState = (): boolean => {
-//   if (typeof window === 'undefined') return false;
+// const getInitialCourseState = (): CourseState => {
+//   if (typeof window === "undefined") return { hasCreatedCourse: false, courseDetails: null };
 //   try {
-//     return localStorage.getItem("hasCreatedCourse") === "true";
+//     const userId = localStorage.getItem("userId"); // Assume userId is stored during login
+//     const storedState = localStorage.getItem(`courseState_${userId}`);
+//     return storedState ? JSON.parse(storedState) : { hasCreatedCourse: false, courseDetails: null };
 //   } catch (error) {
 //     console.error("LocalStorage access error:", error);
-//     return false;
+//     return { hasCreatedCourse: false, courseDetails: null };
 //   }
 // };
 
-const getInitialCourseState = (): CourseState => {
-  if (typeof window === "undefined") return { hasCreatedCourse: false, courseDetails: null };
-  try {
-    const storedState = localStorage.getItem("courseState");
-    return storedState ? JSON.parse(storedState) : { hasCreatedCourse: false, courseDetails: null };
-  } catch (error) {
-    console.error("LocalStorage access error:", error);
-    return { hasCreatedCourse: false, courseDetails: null };
-  }
-};
-const initialState: CourseState = getInitialCourseState();
-// const initialState: CourseState = {
-//   hasCreatedCourse: getInitialCourseState(),
-// };
+
+// const initialState: CourseState = getInitialCourseState();
 
 // const courseSlice = createSlice({
 //   name: "course",
@@ -48,16 +42,92 @@ const initialState: CourseState = getInitialCourseState();
 //   reducers: {
 //     setCourseCreated: (state, action: PayloadAction<boolean>) => {
 //       state.hasCreatedCourse = action.payload;
+      
 //       try {
-//         if (typeof window !== 'undefined') {
-//           localStorage.setItem("hasCreatedCourse", action.payload.toString());
+//         if (typeof window !== "undefined") {
+//           localStorage.setItem(
+//             "courseState",
+//             JSON.stringify({ ...state, hasCreatedCourse: action.payload })
+//           );
+//           console.log("Payload received in setCourseDetails:", action.payload);
 //         }
 //       } catch (error) {
 //         console.error("LocalStorage set error:", error);
 //       }
 //     },
+//     setCourseDetails: (state, action: PayloadAction<CourseDetails>) => {
+//       state.courseDetails = action.payload;
+//       state.hasCreatedCourse = true;
+//       try {
+//         if (typeof window !== "undefined") {
+//           const userId = localStorage.getItem("userId");
+//           localStorage.setItem(
+//             `courseState_${userId}`,
+//             JSON.stringify({
+//               hasCreatedCourse: true,
+//               courseDetails: action.payload
+//             })
+//           );
+//         }
+//       } catch (error) {
+//         console.error("LocalStorage set error:", error);
+//       }
+//     },
+//     clearCourseState: (state) => {
+//       state.hasCreatedCourse = false;
+//       state.courseDetails = null;
+
+//       try {
+//         if (typeof window !== "undefined") {
+//           localStorage.removeItem("courseState");
+//         }
+//       } catch (error) {
+//         console.error("LocalStorage clear error:", error);
+//       }
+//     },
 //   },
 // });
+
+// export const { setCourseCreated,setCourseDetails, clearCourseState } = courseSlice.actions;
+// export default courseSlice.reducer;
+
+
+
+// features/course/courseSlice.ts
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+export interface CourseDetails {
+  program: string;
+  dateRegistered: string;
+  status: string;
+  amountPaid: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+  gender: string;
+  location: string;
+  phone: string;
+  image: string;
+}
+
+interface CourseState {
+  hasCreatedCourse: boolean;
+  courseDetails: CourseDetails | null;
+}
+
+const getInitialCourseState = (): CourseState => {
+  if (typeof window === "undefined") return { hasCreatedCourse: false, courseDetails: null };
+  try {
+    const userId = localStorage.getItem("userId");
+    const storedState = userId ? localStorage.getItem(`courseState_${userId}`) : null;
+    return storedState ? JSON.parse(storedState) : { hasCreatedCourse: false, courseDetails: null };
+  } catch (error) {
+    console.error("LocalStorage access error:", error);
+    return { hasCreatedCourse: false, courseDetails: null };
+  }
+};
+
+const initialState: CourseState = getInitialCourseState();
 
 const courseSlice = createSlice({
   name: "course",
@@ -67,10 +137,13 @@ const courseSlice = createSlice({
       state.hasCreatedCourse = action.payload;
       try {
         if (typeof window !== "undefined") {
-          localStorage.setItem(
-            "courseState",
-            JSON.stringify({ ...state, hasCreatedCourse: action.payload })
-          );
+          const userId = localStorage.getItem("userId");
+          if (userId) {
+            localStorage.setItem(
+              `courseState_${userId}`,
+              JSON.stringify(state)
+            );
+          }
         }
       } catch (error) {
         console.error("LocalStorage set error:", error);
@@ -78,19 +151,37 @@ const courseSlice = createSlice({
     },
     setCourseDetails: (state, action: PayloadAction<CourseDetails>) => {
       state.courseDetails = action.payload;
+      state.hasCreatedCourse = true;
       try {
         if (typeof window !== "undefined") {
-          localStorage.setItem(
-            "courseState",
-            JSON.stringify({ ...state, courseDetails: action.payload })
-          );
+          const userId = localStorage.getItem("userId");
+          if (userId) {
+            localStorage.setItem(
+              `courseState_${userId}`,
+              JSON.stringify(state)
+            );
+          }
         }
       } catch (error) {
         console.error("LocalStorage set error:", error);
       }
     },
+    clearCourseState: (state) => {
+      state.hasCreatedCourse = false;
+      state.courseDetails = null;
+      try {
+        if (typeof window !== "undefined") {
+          const userId = localStorage.getItem("userId");
+          if (userId) {
+            localStorage.removeItem(`courseState_${userId}`);
+          }
+        }
+      } catch (error) {
+        console.error("LocalStorage clear error:", error);
+      }
+    },
   },
 });
 
-export const { setCourseCreated,setCourseDetails } = courseSlice.actions;
+export const { setCourseCreated, setCourseDetails, clearCourseState } = courseSlice.actions;
 export default courseSlice.reducer;

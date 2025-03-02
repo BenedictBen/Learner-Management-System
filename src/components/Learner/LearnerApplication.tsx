@@ -1,124 +1,136 @@
+
+
 "use client";
 
-import { Divider } from "@chakra-ui/react";
+import { Divider, Spinner } from "@chakra-ui/react";
 import Image from "next/image";
-import React, { useState, useRef  } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import CourseRegisterModal from "./CourseRegisterModal";
-import { setCourseCreated,setCourseDetails } from "@/features/courseSlice";
+import { setCourseCreated, setCourseDetails } from "@/features/courseSlice";
+import { CourseDetails } from "@/features/courseSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/lib/store";
-import Link from "next/link";
+import { useCourses } from "@/hooks/learner/useAuth";
+
+interface Course {
+  _id: string;
+  title: string;
+  stacks: string[];
+  // Add other course properties as needed
+}
 
 const LearnerApplication = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const [showApplication, setShowApplication] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Redux state
   const hasCreatedCourse = useSelector(
     (state: RootState) => state.course.hasCreatedCourse
   );
   const courseDetails = useSelector(
     (state: RootState) => state.course.courseDetails
   );
-  const [showApplication, setShowApplication] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // const handleClick = () => {
-  //   if (timerRef.current) {
-  //     // If timer exists, it's a double click
-  //     clearTimeout(timerRef.current);
-  //     timerRef.current = null;
-  //     // Close modal if it's open
-  //     if (showApplication) {
-  //       setShowApplication(false);
-  //     }
-  //   } else {
-  //     // First click, set timer to wait for double click
-  //     timerRef.current = setTimeout(() => {
-  //       // Single click action (open modal)
-  //       setShowApplication(true);
-  //       timerRef.current = null;
-  //     }, 300); // Adjust delay as needed (300ms is typical)
-  //   }
-  // };
+  // Course data fetching
+  const { courses, loading, error } = useCourses();
+
+  // Get course by name
+  const getCourseDataByName = (
+    programName: string | undefined
+  ): Course | null => {
+    if (!courses || !programName) return null;
+    return courses.find((course) => course.title === programName) || null;
+  };
+
+  // Derived course data
+  const courseData = courseDetails?.program
+    ? getCourseDataByName(courseDetails.program)
+    : null;
 
   const handleClick = () => {
-    if (showApplication) {
-      
-      setShowApplication(false);
-      
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        timerRef.current = null;
-      }
-    } else {
-     
-      setShowApplication(true);
-      
-    }
+    setShowApplication((prev) => !prev);
+    if (timerRef.current) clearTimeout(timerRef.current);
   };
-  
-  const handleCourseCreated = () => {
+
+  const handleCourseCreated = (details: CourseDetails) => {
     dispatch(setCourseCreated(true));
+    dispatch(setCourseDetails(details));
     setShowApplication(false);
   };
 
+  if (loading) return <div className="p-4 text-center"><Spinner size="lg" style={{color: "#186788"}} /></div>;
+  if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
+
+
 
   return (
-    <div>
+    <div className="container mx-auto p-4">
       {!hasCreatedCourse ? (
-        <>
-        
-        <div>
-        <Image src="/no-application.png" alt="no-application" width={300} height={100} className="mx-auto"/>
-        <p className="font-bold text-center space-y-4">!!! OOPs no application</p>
-      </div>
+        <div className="text-center">
+          <Image
+            src="/no-application.png"
+            alt="no-application"
+            width={300}
+            height={100}
+            className="mx-auto"
+          />
+          <p className="font-bold mt-4 text-lg">!!! OOPS, no application</p>
 
-<div className="flex flex-col md:flex-row items-center justify-start md:justify-center gap-4 mt-8">
-<div className="flex items-center justify-center  cursor-pointer text-black py-3 rounded md:w-52 w-80 bg-casbGreyPrimary">
-  <button type="submit" className=" ">
-    Home
-  </button>
-  <Image
-    src="/chevron.png"
-    alt="chevron"
-    width={20}
-    height={20}
-    className="text-white"
-  />
-</div>
-<div className="flex items-center justify-center  cursor-pointer text-white py-3 rounded md:w-64 w-80  bg-casbBluePrimary">
-  <button type="submit" className=" " onClick={handleClick}>
-    Start new application
-  </button>
-  <Image
-    src="/chevron-right-white.png"
-    alt="chevron"
-    width={20}
-    height={20}
-    className="text-white"
-  />
-</div>
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-8">
+            <button className="flex items-center bg-casbGreyPrimary text-black py-3 px-6 rounded w-80 md:w-52 justify-center transition-colors duration-200 hover:bg-casbGrayHover">
+              Home
+              <Image
+                src="/chevron.png"
+                alt="chevron"
+                width={20}
+                height={20}
+                className="ml-2"
+              />
+            </button>
 
-{/* Registration Modal */}
-</div>
-{showApplication && (
+          <div
+          className="flex items-center bg-casbBluePrimary text-white py-3 px-6 rounded w-80 md:w-64 justify-center hover:bg-casbBlueHover">
+            <button
+              onClick={handleClick}
+              className="whitespace-nowrap"
+            >
+              Start new application
+            </button>
+              <Image
+                src="/chevron-right-white.png"
+                alt="chevron"
+                width={20}
+                height={20}
+                className="ml-2"
+              />
+            </div>
+          </div>
+
+          {showApplication && (
             <CourseRegisterModal
               onClose={() => setShowApplication(false)}
               onSuccess={handleCourseCreated}
             />
           )}
-</>
-      ): (
+        </div>
+      ) : (
         <div>
-        <div className=" flex flex-col mt-4 items-start md:items-center md:justify-center  gap-4 md:flex-row">
+         
+        <div className=" flex flex-col mt-4 items-start md:items-center justify-start  gap-6 md:flex-row">
           <div className="flex gap-2 md:block">
-            <h1 className="text-casbDisabled">Program</h1>
-            <p className="font-semi-bold">Data Science</p>
+            <h1 className="text-casbDisabled test-base lg:text-md">Program</h1>
+            <h1 className="font-semi-bold">
+              {courseDetails?.program}
+              
+</h1>
           </div>
           <span className="hidden md:block">
-            <Divider orientation="vertical" height="40px" mx={4} />
+            <Divider orientation="vertical" height="40px" mx={1} />
           </span>
           <div className="flex gap-2 md:block">
-            <h1 className="text-casbDisabled">Date registered</h1>
-            <p className="font-semi-bold">2024/11/16</p>
+            <h1 className="text-casbDisabled  text-sm  whitespace-nowrap ">Date registered</h1>
+            <p className="font-semi-bold">{courseDetails?.dateRegistered || "N/A"}</p>
           </div>
           <span className="hidden md:block">
             <Divider orientation="vertical" height="40px" mx={4} />
@@ -126,7 +138,7 @@ const LearnerApplication = () => {
 
           <div className="flex gap-2 md:block">
             <h1 className="text-casbDisabled">Status</h1>
-            <p className="font-semi-bold">Registered</p>
+            <p className="font-semi-bold">{courseDetails?.status || "N/A"}</p>
           </div>
           <span className="hidden md:block">
             <Divider orientation="vertical" height="40px" mx={4} />
@@ -134,70 +146,93 @@ const LearnerApplication = () => {
 
           <div className="flex gap-2 md:block">
             <h1 className="text-casbDisabled">Paid</h1>
-            <p className="font-semi-bold">$150.00</p>
+            <span className="font-semi-bold flex">
+              <p>&#162;</p>
+              {courseDetails?.amountPaid || "N/A"}</span>
           </div>
         </div>
-        <Divider
-          orientation="horizontal"
-          height="40px"
-          mx={1}
-          className="mb-8"
-        />
-  <div className="mt-4 bg-white">
-  <div className="grid grid-cols-3 md:grid-cols-4 gap-4 justify-items-center md:justify-items-start">
-    <button className="w-full h-full border border-casbDisabled px-2 py-2 md:px-6 md:py-3 rounded-sm">
-      PowerBI
-    </button>
-    <button className="w-full h-full border border-casbSeaBlueSecondary px-2 py-2 md:px-6 md:py-3 rounded-sm">
-      Python
-    </button>
-    <button className="w-full h-full border border-casbSuccess px-2 py-2 md:px-6 md:py-3 rounded-sm">
-      Excel
-    </button>
-    <button className="w-full h-full border border-casbError px-2 py-2 md:px-6 md:py-3 rounded-sm">
-      Tableau
-    </button>
-  </div>
-</div>
 
+          <Divider className="my-8" />
 
-        {/* Two buttons */}
-        <div className="flex flex-col md:flex-row items-center justify-start gap-4 mt-8">
-          <div className="flex items-center justify-center  cursor-pointer text-black py-3 rounded md:w-52 w-80 bg-casbGreyPrimary">
-            <button type="submit" className=" ">
-              Home
-            </button>
-            <Image
-              src="/chevron.png"
-              alt="chevron"
-              width={20}
-              height={20}
-              className="text-white"
-            />
+        
+          <div className="mt-8">
+            {courseData?.stacks?.length ? (
+              <div className="flex flex-col md:flex-row gap-4">
+              {courseData.stacks.map((stack, index) => {
+                // Array of border colors for different stacks
+                const borderColors = [
+                  '#28ACE2',
+                  '#77C053',
+                  '#A61D24',
+                  '#D89614',
+                  '#999999'
+                ];
+                
+                return (
+                  <div
+                    key={index}
+                    className={`
+                     
+                      p-3 rounded-lg 
+                      border 
+                      w-[100px] 
+                      h-[50px]
+                      flex items-center justify-center
+                      transition-all
+                      
+                      hover:shadow-md
+                    `}
+                    style={{
+                      borderColor: borderColors[index % borderColors.length],
+                      // For hover effect (optional):
+                      transition: 'border-color 0.3s ease'
+                    }}
+                  >
+                    <span className="font-medium text-gray-700 text-center">
+                      {stack}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+            ) : (
+              <div className="text-gray-500 p-4 border rounded-lg bg-gray-50">
+                {courseData
+                  ? "No curriculum information available"
+                  : "Course data not loaded"}
+              </div>
+            )}
           </div>
-          <div className="flex items-center justify-center  cursor-pointer text-white py-3 rounded md:w-64 w-80  bg-casbBluePrimary">
-            <button type="submit" className=" " onClick={() => setShowApplication(true)}>
-              Start new application
-            </button>
-            <Image
-              src="/chevron-right-white.png"
-              alt="chevron"
-              width={20}
-              height={20}
-              className="text-white"
-            />
-          </div>
+
+          {/* Action Buttons */}
+            <div className="flex flex-col md:flex-row items-center justify-start gap-4 mt-8">
+                    <div className="flex items-center justify-center  cursor-pointer text-black py-3 rounded md:w-52 w-full bg-casbGreyPrimary">
+                      <button type="submit" className=" ">
+                        Home
+                      </button>
+                      <Image
+                        src="/chevron.png"
+                        alt="chevron"
+                        width={20}
+                        height={20}
+                        className="text-white"
+                      />
+                    </div>
+                    <div className="flex items-center justify-center  cursor-pointer text-white py-3 rounded md:w-64 w-full  bg-casbBluePrimary">
+                      <button type="submit" className=" " onClick={() => setShowApplication(true)}>
+                        Start new application
+                      </button>
+                      <Image
+                        src="/chevron-right-white.png"
+                        alt="chevron"
+                        width={20}
+                        height={20}
+                        className="text-white"
+                      />
+                    </div>
+                  </div>
         </div>
-      </div>
       )}
-      
-      {/* {!showApplication ? (
-
-
-      ) : (
-
-          <CourseRegisterModal onClose={() => setShowApplication(false)} />
-      )} */}
     </div>
   );
 };

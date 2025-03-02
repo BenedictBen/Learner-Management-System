@@ -88,7 +88,7 @@ export const useOtpVerify = () => {
         const { email, _id: id } = data.User;
         
         // 2. Automatically log the user in using credentials
-        const result = await signIn('credentials', {
+        const result = await signIn('learner', {
           redirect: false,
           email: pendingUserEmail || email,
           password: temporaryPassword,
@@ -110,7 +110,7 @@ export const useOtpVerify = () => {
         dispatch(clearTemporaryPassword());
 
         // 6. Redirect directly to dashboard
-        router.push("/learner/dashboard");
+        router.push("/learner");
 
       } catch (error: any) {
         console.error("Post-verification login failed:", error);
@@ -121,7 +121,7 @@ export const useOtpVerify = () => {
           duration: 5000,
           isClosable: true,
         });
-        router.push("/learner");
+       
       }
     },
     onError: (error: Error) => {
@@ -251,4 +251,38 @@ export const useCourseList = () => {
     queryFn: courseList,
     staleTime: 60 * 1000, // 1 minute cache
   });
+};
+
+// hooks/useCourses.ts
+import { useState, useEffect } from "react";
+
+export const useCourses = () => {
+  const [courses, setCourses] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch("https://tmp-se-project.azurewebsites.net/api/courses");
+        if (!response.ok) {
+          throw new Error("Failed to fetch courses");
+        }
+        const data = await response.json();
+        if (data.success && data.courses) {
+          setCourses(data.courses);
+        } else {
+          throw new Error("Invalid response from server");
+        }
+      } catch (err: any) {
+        setError(err.message || "An error occurred while fetching courses");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
+  return { courses, loading, error };
 };

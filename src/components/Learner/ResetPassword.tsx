@@ -118,7 +118,7 @@ const ResetPassword: React.FC<ForgetPasswordProps> = ({ onClose, onSignupClick }
               {/* Toggle Password Visibility Icon */}
               <div
                 onClick={toggleNewPasswordVisibility}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                className="absolute right-8 top-1/2 transform -translate-y-1/2 cursor-pointer"
               >
                 <Image
                   src={
@@ -204,7 +204,7 @@ const ResetPassword: React.FC<ForgetPasswordProps> = ({ onClose, onSignupClick }
               {/* Toggle Password Visibility Icon */}
               <div
                 onClick={toggleConfirmPasswordVisibility}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                className="absolute right-8 top-1/2 transform -translate-y-1/2 cursor-pointer"
               >
                 <Image
                   src={
@@ -227,7 +227,7 @@ const ResetPassword: React.FC<ForgetPasswordProps> = ({ onClose, onSignupClick }
         </div>
 
         {/* Reset Password Button */}
-        <div className="flex items-center justify-center hover:bg-blue-600 cursor-pointer my-2 text-white py-2 rounded bg-casbBluePrimary">
+        <div className="flex items-center justify-center hover:bg-casbBlueHover cursor-pointer my-2 text-white py-2 rounded bg-casbBluePrimary">
           <button type="submit" className="">
             Reset password
           </button>

@@ -15,7 +15,13 @@ export const FieldIcons: Record<string, string | null> = {
     eye: "/eye.png",
     eye_close: "/eye-close.png",
     chevron_right_white: "/chevron-right-white.png",
-    location: null,
+    arrowdown: "/arrow-b.png",
+    calender: "/calender.png",
+    status: "/pending.png",
+    detail: "/edit-black.png",
+    location: "/location.png",
+    course: "/hat.png",
+    stacks: "/stacks.png",
     description: null,
   };
   

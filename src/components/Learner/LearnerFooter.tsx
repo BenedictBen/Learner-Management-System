@@ -1,6 +1,7 @@
 "use client"
 import Image from "next/image";
 import React from "react";
+import { BrandLinks } from "../Admin/BrandLinks";
 
 const LearnerFooter = () => {
   return (
@@ -12,7 +13,7 @@ const LearnerFooter = () => {
       src="/logo-white.png"
       alt="logo"
       width={200}
-      height={100}
+      height={200}
       className="w-32 h-15 sm:w-36 sm:h-16 md:w-48 md:h-20"
     />
   </div>
@@ -66,8 +67,10 @@ const LearnerFooter = () => {
         <p className="sm:text-center">
           © copyright 2025 - G-client, All rights reserved
         </p>
+        <p>By Benedict Baah</p>
+        <BrandLinks/>
         <div 
-  className="flex gap-1 cursor-pointer items-center" 
+  className="flex gap-1 cursor-pointer items-center hover-text-green-500" 
   onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
 >
   <p>Back to top</p>

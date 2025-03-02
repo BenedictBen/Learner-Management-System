@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 
 import { handleGoogleSignIn } from '@/actions/auth-actions';
 // import { signIn } from "@/googleAuth/googleAuth";
-import { signIn } from "next-auth/react";
+import { signIn,useSession } from "next-auth/react";
 
 
 interface LoginFormsProps {
@@ -30,27 +30,27 @@ const LoginForms: React.FC<LoginFormsProps> = ({ onForgotPasswordClick, onSignup
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-
+const { data: session, status } = useSession();
   const router = useRouter();
 
   const togglePasswordVisibility = (): void => {
     setShowPassword(!showPassword);
   };
 // Add this useEffect to your login component
-useEffect(() => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const error = urlParams.get('error');
+// useEffect(() => {
+//   const urlParams = new URLSearchParams(window.location.search);
+//   const error = urlParams.get('error');
   
-  if (error === 'AuthenticationFailed') {
-    toast({
-      title: "Authentication Failed",
-      description: "Invalid email or password",
-      status: "error",
-      duration: 5000,
-      isClosable: true,
-    });
-  }
-}, []);
+//   if (error === 'AuthenticationFailed') {
+//     toast({
+//       title: "Authentication Failed",
+//       description: "Invalid email or password",
+//       status: "error",
+//       duration: 5000,
+//       isClosable: true,
+//     });
+//   }
+// }, []);
   const toast = useToast();
   const { mutate: login, isPending } = useLogin();
 
@@ -61,24 +61,25 @@ useEffect(() => {
     watch,
   } = useForm<FormValues>();
 
-  // const onSubmit = (data: FormValues) => {
-  //   login(data, {
-  //     onError: (error) => {
-  //       toast({
-  //         title: "Login Failed",
-  //         description: error.message,
-  //         status: "error",
-  //         duration: 5000,
-  //         isClosable: true,
-  //       });
-  //     }
-  //   });
-  // };
-
+  useEffect(() => {
+    if (status === "authenticated") {
+      if (session?.user?.role === "user") {
+        router.push("/learner");
+      } else {
+        toast({
+          title: "Access Denied",
+          description: "You don't have admin privileges",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }  
+    }
+  }, [status, session, router, toast]);
   const handleLogin = async (data: FormValues) => {
     setIsLoading(true);
     try {
-      const result = await signIn('credentials', {
+      const result = await signIn('learner', {
         email: data.email,
         password: data.password,
         redirect: false,
@@ -93,7 +94,7 @@ useEffect(() => {
       }
   
       if (result?.ok) {
-        router.push('/learner/dashboard');
+        router.push('/learner');
       }
     } catch (error: any) {
       toast({
@@ -121,13 +122,14 @@ useEffect(() => {
             </div>
             ) : (
               <form action={handleGoogleSignIn}>
-              <button>Log in using Google</button>
+              <button  >Log in using Google</button>
             </form>
             )}
           </div>
         </div>
         <p className="text-center my-1">or</p>
       <form onSubmit={handleSubmit(handleLogin)} className="space-y-6 px-6">
+
         {/* Email Input */}
         <div>
           <div key="Email" className="relative">
@@ -273,7 +275,7 @@ useEffect(() => {
               {/* Toggle Password Visibility Icon */}
               <div
                 onClick={togglePasswordVisibility}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                className="absolute right-8 top-1/2 transform -translate-y-1/2 cursor-pointer"
               >
                 <Image
                   src={
@@ -307,8 +309,7 @@ useEffect(() => {
 
         </div>
 
-        {/* Submit Button */}
-        {/* <button type="submit">Login</button> */}
+     
         {isLoading  ? (
           <div className="flex items-center justify-center gap-2">
           <Spinner size="sm" color="blue-500" />
@@ -318,7 +319,7 @@ useEffect(() => {
 
         <button
           type="submit"
-          className="w-full bg-casbBluePrimary text-white py-2 rounded"
+          className="w-full bg-casbBluePrimary text-white py-2 rounded hover:bg-casbBlueHover"
         >
           Login
         </button>

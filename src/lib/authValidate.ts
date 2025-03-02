@@ -1,5 +1,6 @@
 import { login } from "@/services/learner/api";
 
+// src/lib/authValidate.ts
 export async function validateUser(email: string, password: string) {
   try {
     const response = await login({ email, password });
@@ -7,15 +8,12 @@ export async function validateUser(email: string, password: string) {
     if (response.error || !response.user) {
       throw new Error(response.message || "Authentication failed");
     }
-
-    return {
-      id: response.user.id,
-      email: response.user.email,
-      name: "", // Add if available in response
-      image: "" // Add if available in response
-    };
+    
+    return response.user;
   } catch (error) {
     console.error("Validation error:", error);
-    throw error;
+    throw new Error(
+      (error as Error).message || "Network error. Please check your connection."
+    );
   }
 }
