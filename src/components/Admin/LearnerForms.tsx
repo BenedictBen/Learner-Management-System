@@ -37,7 +37,7 @@ const LearnerForms = ({ onClose }: LearnerFormProps) => {
   useEffect(() => {
     dispatch(fetchCourses({}));
   }, [dispatch]);
-
+ 
   // Retrieve courses and their loading status from Redux.
   const { courses } = useSelector((state: RootState) => state.adminCourses);
 

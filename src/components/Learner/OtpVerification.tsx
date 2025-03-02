@@ -62,7 +62,7 @@ const OtpVerification: React.FC<VerificationCodeProps> = ({
 
   return (
     <div>
-      <div className="mb-2">
+      <div className="flex flex-col mb-2">
         <h1 className="text-center font-bold text-xl mb-2 text-black">
           OTP Verification
         </h1>

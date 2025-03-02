@@ -154,7 +154,7 @@ export const apiLogout = async (): Promise<void> => {
 };
 
 export const courseList = async (): Promise<Course[]> => {
-  const response = await fetch("https://tmp-se-project.azurewebsites.net//api/courses", {
+  const response = await fetch(("/api/auth/courses"), {
     method: "GET",
     headers: { 
       "Content-Type": "application/json",

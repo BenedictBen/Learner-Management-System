@@ -15,7 +15,6 @@ interface CourseRegister{
   onClose: () => void;
   onSuccess: (details: CourseDetails) => void;
 }
-
 interface CourseDetails {
   program: string;
   dateRegistered: string;
@@ -128,7 +127,20 @@ const CourseRegisterModal: React.FC<CourseRegister> = ({ onSuccess, onClose }) =
       console.log('API Data:', apiData);
 
       const today = new Date().toISOString().split("T")[0]; // Get today's date
-
+      // const details: CourseDetails = {
+      //   program: formData.chooseModule, // Assuming this is the program name
+      //   dateRegistered: today,
+      //   status: "Registered",
+      //   amountPaid: Number(formData.amount),
+      //   firstname: formData.firstName.trim(), // Add first name
+      //   lastname: formData.lastName.trim(), // Add last name
+      //   email: formData.email.toLowerCase().trim(), // Add email
+      //   gender: formData.gender, // Add gender
+      //   location: formData.location.trim(), // Add location
+      //   phone: formData.phone.replace(/\D/g, ""), // Add phone number
+      //   image: imageUrl, // Add image URL
+      // };
+  
       const details: CourseDetails = {
         program: courses?.find(c => c._id === formData.chooseModule)?.title || formData.chooseModule,
         dateRegistered: new Date().toISOString().split("T")[0],
@@ -143,7 +155,7 @@ const CourseRegisterModal: React.FC<CourseRegister> = ({ onSuccess, onClose }) =
         image: imageUrl,
       };
       
-      
+      console.log("Final Course Details:", details);
       dispatch(setCourseDetails(details));
       onSuccess(details);
 
@@ -172,7 +184,7 @@ const CourseRegisterModal: React.FC<CourseRegister> = ({ onSuccess, onClose }) =
         },
       });
     } catch (error) {
-      
+      console.error("Registration Error:", error); // Log the error for debugging
       toast({
         title: "Registration Error",
         description: "An unexpected error occurred",
@@ -183,6 +195,9 @@ const CourseRegisterModal: React.FC<CourseRegister> = ({ onSuccess, onClose }) =
     }
   };
  
+   // Handle image preview
+
+
   return (
     <div className="animate-fade-in px-4 sm:px-6 lg:px-8">
       <div className="mt-1 md:mt-8">
@@ -387,7 +402,7 @@ const CourseRegisterModal: React.FC<CourseRegister> = ({ onSuccess, onClose }) =
             </div>
 
             {/* Location */}
-            <div key="Location" className="relative">
+            <div className="relative">
               <div className="relative flex items-center">
                 <input
                   type="text"
@@ -663,7 +678,7 @@ const CourseRegisterModal: React.FC<CourseRegister> = ({ onSuccess, onClose }) =
           {/* Image Upload */}
           <div className="relative w-full">
             <div
-              className={`relative flex items-center border p-3 bg-[#E6E6E6] focus:border-casbBluePrimary rounded-lg focus:outline-none cursor-pointer appearance-none ${
+              className={`relative flex items-center border p-3 bg-[#F5F5F5] focus:border-casbBluePrimary rounded-lg focus:outline-none cursor-pointer appearance-none ${
                 errors.image
                   ? "border-red-500"
                   : imagePreview
@@ -879,13 +894,13 @@ const CourseRegisterModal: React.FC<CourseRegister> = ({ onSuccess, onClose }) =
             <button
               type="button"
               onClick={onClose}
-              className="flex items-center justify-center gap-2 w-full md:w-48 px-6 py-3 bg-casbGreyPrimary rounded-lg hover:bg-casbGrayHover"
+              className="flex items-center justify-center gap-2 w-full md:w-48 px-6 py-3 bg-casbGreyPrimary rounded-lg hover:bg-gray-200 transition-colors"
             >
               <Image src="/back.png" alt="Back" width={20} height={20} />
               Back
             </button>
             {isPending ? (
-              <div className="flex items-center justify-center gap-2 w-full bg-casbBluePrimary text-white py-2 rounded hover:bg-casbBlueHover">
+              <div className="flex items-center justify-center gap-2 w-full bg-casbBluePrimary text-white py-2 rounded hover:bg-blue-600">
                           <Spinner size="sm" color="blue-500" />
                           <span>Registering...</span>
                         </div>
@@ -893,7 +908,7 @@ const CourseRegisterModal: React.FC<CourseRegister> = ({ onSuccess, onClose }) =
 
             <button
               type="submit"
-              className="flex items-center justify-center gap-2 w-full md:w-48 px-6 py-3 bg-casbBluePrimary text-white rounded-lg hover:bg-casbBlueHover transition-colors"
+              className="flex items-center justify-center gap-2 w-full md:w-48 px-6 py-3 bg-casbBluePrimary text-white rounded-lg hover:bg-blue-600 transition-colors"
             >
               Register
               <Image src="/chevron-right-white.png" alt="Submit" width={20} height={20} />

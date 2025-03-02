@@ -1,5 +1,12 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 
+
+interface Course {
+  _id: string;
+  title: string;
+  // ... other course properties
+}
+
 export interface CourseDetails {
   program: string;
   dateRegistered: string;

@@ -264,7 +264,7 @@ export const useCourses = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch("https://tmp-se-project.azurewebsites.net/api/courses");
+        const response = await fetch("/api/auth/courses");
         if (!response.ok) {
           throw new Error("Failed to fetch courses");
         }

@@ -11,6 +11,12 @@ async function fetchCourses(): Promise<Course[]> {
     const token = cookieStore.get('token')?.value
   if (!token) return [];
 
+  const headers = {
+    'Access-Control-Allow-Origin': 'https://lms-g-client.vercel.app',
+    'Access-Control-Allow-Methods': 'GET',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  };
+
   try {
     const res = await fetch(courseeUrl, {
       headers: {
@@ -19,7 +25,7 @@ async function fetchCourses(): Promise<Course[]> {
       },
     });
 
-    if (!res.ok) throw new Error('Failed to fetch invoices');
+    if (!res.ok) throw new Error('Failed to fetch courses');
     const data = await res.json();
     // Ensure data matches Invoice[] structure
     return data as Course[];
@@ -31,5 +37,8 @@ async function fetchCourses(): Promise<Course[]> {
 
 export async function GET() {
   const courses = await fetchCourses();
-  return NextResponse.json(courses);
+  const response = NextResponse.json(courses);
+  // Set the CORS header so your client can access this proxy response
+  response.headers.set("Access-Control-Allow-Origin", "*");
+  return response;
 }
