@@ -76,7 +76,7 @@ A robust learner management system built with [Next.js](https://nextjs.org/) and
    yarn dev
    ```
 
-   Open [http://localhost:3000](http://localhost:5173) to view it in the browser.
+   Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
 
 ## Deployment
 
