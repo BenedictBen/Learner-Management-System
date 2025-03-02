@@ -4,12 +4,11 @@ import CourseForms from "@/components/Admin/CourseForms";
 import SearchBar from "@/components/Admin/Search";
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
-import { Course } from "@/lib/types";
 import { RootState, AppDispatch } from "@/lib/store";
 import { fetchCourses } from "@/features/CoursesSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-const CoursesPage = () => {
+export default function CoursesPage(){
     const dispatch = useDispatch<AppDispatch>();
 
   const [showForm, setShowForm] = useState(false);
@@ -98,4 +97,4 @@ const CoursesPage = () => {
   );
 };
 
-export default CoursesPage;
+

@@ -10,7 +10,7 @@ import { RootState, AppDispatch } from "@/lib/store";
 import { fetchLearners } from "@/features/learnerSlice";
 import { useDispatch, useSelector } from "react-redux";
 
-const LearnerPage = () => {
+export default function LearnerPage(){
   const dispatch = useDispatch<AppDispatch>();
   const { learners, loading, error } = useSelector(
     (state: RootState) => state.learner
@@ -104,4 +104,4 @@ const LearnerPage = () => {
   );
 };
 
-export default LearnerPage;
+

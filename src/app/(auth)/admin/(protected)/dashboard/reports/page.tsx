@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ReportsPage = () => {
+export default function ReportsPage() {
   return (
     <div className='flex '>
       <div className='flex items-center justify-center mx-auto'>
@@ -13,4 +13,3 @@ const ReportsPage = () => {
   )
 }
 
-export default ReportsPage

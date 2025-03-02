@@ -10,7 +10,7 @@ import React, { useRef, useState } from "react";
 
 
 
-const InvoicesPage = () => {
+export default function InvoicesPage() {
   const [showForm, setShowForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -74,4 +74,4 @@ const InvoicesPage = () => {
   );
 };
 
-export default InvoicesPage;
+

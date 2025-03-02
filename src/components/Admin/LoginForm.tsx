@@ -179,16 +179,16 @@ const LoginForm = () => {
                 placeholder="Password"
                 {...register("password", {
                   required: "Password is required",
-                  minLength: {
-                    value: 8,
-                    message: "Minimum 8 characters"
-                  },
-                  pattern: {
-                    value:
-                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-                    message:
-                      "Must include uppercase, lowercase, number, and special character",
-                  },
+                  // minLength: {
+                  //   value: 8,
+                  //   message: "Minimum 8 characters"
+                  // },
+                  // pattern: {
+                  //   value:
+                  //     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+                  //   message:
+                  //     "Must include uppercase, lowercase, number, and special character",
+                  // },
                 })}
                 className={`w-full p-2 pl-10 pr-8 border-b-2 ${
                   errors.password

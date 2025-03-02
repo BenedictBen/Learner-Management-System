@@ -1,5 +1,6 @@
 "use client" // Required for theme provider
-
+import { useRouter, usePathname } from "next/navigation";
+import { useEffect } from "react";
 import { ThemeProvider } from "@/components/theme-provider"
 
 export default function AdminLayout({
@@ -7,6 +8,15 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (pathname === "/admin") {
+      router.replace("/admin/dashboard");
+    }
+  }, [pathname, router]);
+  
   return (
     <ThemeProvider
       attribute="class"
