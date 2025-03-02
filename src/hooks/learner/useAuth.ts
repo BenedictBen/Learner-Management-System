@@ -49,30 +49,6 @@ export const useSignup = () => {
   });
 };
 
-// export const useOtpVerify = () => {
-//   const dispatch = useDispatch();
-//   const router = useRouter();
-
-//   return useMutation({
-//     mutationFn: otpVerify,
-//     onSuccess: (data) => {
-//       const { email, _id: id } = data.User;
-
-//       dispatch(signin({ email, id }));
-
-//       localStorage.setItem("userEmail", email);
-//       localStorage.setItem("userId", id);
-
-//       localStorage.removeItem("pendingEmail");
-//       localStorage.removeItem("verificationToken");
-
-//       router.push("/learner");
-//     },
-//     onError: (error: Error) => {
-//       console.error("OTP Verification failed:", error.message);
-//     },
-//   });
-// };
 
 export const useOtpVerify = () => {
   const dispatch = useDispatch();
@@ -177,39 +153,6 @@ export const useResetPassword = () => {
   });
 };
 
-// export const useRegisterCourse = () => {
-//   const queryClient = useQueryClient();
-
-//   return useMutation({
-//     mutationFn: async (data: {
-//       firstname: string;
-//       lastname: string;
-//       email: string;
-//       course: string;
-//       gender: string;
-//       location: string;
-//       phone: string;
-//       disability: boolean;
-//       image: string;
-//       description: string;
-//       amount: number;
-//     }) => {
-//       // const token = localStorage.getItem("token");
-//       // if (!token) throw new Error("No authentication token found");
-
-//       // Pass token inside the headers if required
-//       return await registerCourse(data);
-//     },
-
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({ queryKey: ["courses"] });
-//     },
-//     onError: (error) => {
-//       console.error("Course creation failed:", error);
-//     },
-//   });
-// };
-
 // hooks/learner/useAuth.ts
 export const useRegisterCourse = () => {
   const queryClient = useQueryClient();
@@ -264,7 +207,7 @@ export const useCourses = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await fetch("https://tmp-se-project.azurewebsites.net/api/courses");
+         const response = await fetch("/api/auth/courses");
         if (!response.ok) {
           throw new Error("Failed to fetch courses");
         }
