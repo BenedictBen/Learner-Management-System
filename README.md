@@ -9,14 +9,20 @@ A robust learner management system built with [Next.js](https://nextjs.org/) and
 ## Features
 
 - **User Authentication:** Secure login and registration for learners and administrators. Includes support for role-based access control (RBAC) to ensure data privacy and security.
- **Google Sign-up/Sign-in**: Learners can conveniently sign up or log in using their Google accounts.
-**Two-Step Verification**: Enhanced security with two-factor authentication for learner and admin accounts to protect sensitive data.
- **Admin Controls**:
-**Empower administrators with robust management tools**:
+
+- **Google Sign-up/Sign-in**: Learners can conveniently sign up or log in using their Google accounts.
+**Sign-Up Verification**: Enhanced security with sign-up authentication for learner and admin accounts to protect sensitive data.
+ 
+- **Admin Controls**:
+- **Empower administrators with robust management tools**:
+
  *Learner Management* : Admins can create, update, and delete learner profiles as needed.
+
 *Invoice Management*: Admins can generate, track, and manage invoices for paid courses. Easily monitor payment statuses (Paid/Pending) and resolve discrepancies.
+
 *Course Management*: Admins can generate, track, create and manage courses for paid courses. 
-**Responsive Design:** Fully responsive UI for a seamless experience on desktop and mobile devices.
+
+- **Responsive Design:** Fully responsive UI for a seamless experience on desktop and mobile devices.
 
 
 ## Technologies Used
