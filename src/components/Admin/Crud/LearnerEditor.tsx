@@ -4,15 +4,14 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { FormValues, Learner } from "@/lib/types"; // Ensure this matches your Learner type
-import { useCourseList } from "@/hooks/learner/useAuth";
-import { AppDispatch } from "@/lib/store";
+import { AppDispatch, RootState } from "@/lib/store";
 import { updateLearnerAsync } from "@/features/learnerSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { uploadImageToCloudinary } from "@/lib/cloudinary";
 import { FieldIcons } from "@/lib/FormsIcons";
 import { useForm } from "react-hook-form";
+import { fetchCourses } from "@/features/CoursesSlice";
 
-// Example FieldIcons – adjust or import these from your icons file
 
 interface LearnerEditorProps {
   learner: Learner;
@@ -42,11 +41,12 @@ export default function LearnerEditor({
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const {
-    data: coursesData,
-    isLoading: coursesLoading,
-    error: coursesError,
-  } = useCourseList();
+  useEffect(() => {
+    dispatch(fetchCourses({}));
+  }, [dispatch]);
+
+  // Retrieve courses and their loading status from Redux.
+  const { courses } = useSelector((state: RootState) => state.adminCourses);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -149,12 +149,7 @@ export default function LearnerEditor({
           </div>
           <div className="mb-4">
             <label className="block mb-1">Course</label>
-            {coursesLoading ? (
-              <p>Loading courses...</p>
-            ) : coursesError ? (
-              <p>Error loading courses</p>
-            ) : (
-              <select
+            <select
                 value={course}
                 onChange={(e) => setCourse(e.target.value)}
                 required
@@ -168,14 +163,13 @@ export default function LearnerEditor({
              
               >
                 <option value="">Select Program</option>
-                {Array.isArray(coursesData) &&
-                  coursesData.map((c) => (
-                    <option key={c._id} value={c._id}>
-                      {c.title}
-                    </option>
-                  ))}
+                {Array.isArray(courses) &&
+                courses.map((c) => (
+                  <option key={c._id} value={c._id}>
+                    {c.title}
+                  </option>
+                ))}
               </select>
-            )}
           </div>
           <div key="Image" className="relative w-full mb-4">
             <div

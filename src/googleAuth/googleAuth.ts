@@ -1,7 +1,7 @@
 
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { validateAdmin } from "@/lib/validateAdmin";
+
 import type { DefaultSession } from "next-auth";
 import { validateUser } from "@/lib/authValidate";
 import Google from "next-auth/providers/google";
@@ -94,65 +94,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               }
             }
           }),
-    // Credentials({
-    //   id: "admin",
-    //   name: "Admin",
-    //   credentials: {
-    //     email: { label: "Email", type: "email" },
-    //     password: { label: "Password", type: "password" }
-    //   },
-    //   async authorize(credentials) {
-    //     if (!credentials?.email || !credentials?.password) return null;
-
-    //     try {
-    //       const admin = await validateAdmin(
-    //         credentials.email.toString(),
-    //         credentials.password.toString()
-    //       );
-
-    //       // const token = await getAdminToken(admin.id); 
-
-        
-    //       return {
-    //         id: admin.id,
-    //         email: admin.email,
-    //         name: `${admin.first_name} ${admin.last_name}`,
-    //         role: "admin",
-    //         // accessToken: token,
-    //         Admin: {
-    //           id: admin.id,
-    //           first_name: admin.first_name,
-    //           last_name: admin.last_name,
-    //           email: admin.email,
-    //           contact: admin.contact
-    //         }
-    //       };
-    //     } catch (error) {
-    //       return null;
-    //     }
-    //   }
-    // })
+    
   ],
   secret: process.env.NEXTAUTH_SECRET!,
  
-  // pages: {
-  //   signIn: "/admin/login",
-  //   signOut: "/learner",
-  //   error: "/login/error"
-  // },
-  // next-auth.config.ts
-// cookies: {
-//   sessionToken: {
-//     name: "next-auth.session-token", // Different name from your backend token
-//     options: {
-//       httpOnly: true,
-//       sameSite: "lax",
-//       path: "/",
-//       secure: process.env.NODE_ENV === "production",
-//       maxAge: 30 * 24 * 60 * 60 // Match your session maxAge
-//     }
-//   }
-// },
+ 
  // Update your NextAuth config to ensure proper token handling
  callbacks: {
   async jwt({ token, user, trigger, session  }) {

@@ -28,7 +28,7 @@ export default function CourseCard({
       if (learner.course) {
         countMap[learner.course] = (countMap[learner.course] || 0) + 1;
       }
-    });
+    }); 
     return countMap;
   }, [learners]);
   const fallbackImages = [SD, CCE, DS];

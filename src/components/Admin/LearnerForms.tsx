@@ -3,10 +3,12 @@ import { FieldIcons } from "@/lib/FormsIcons";
 import { FormValues } from "@/lib/types";
 import { Divider, Spinner } from "@chakra-ui/react";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useCourseList } from "@/hooks/learner/useAuth";
 import { uploadImageToCloudinary } from "@/lib/cloudinary";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/lib/store";
+import { fetchCourses } from "@/features/CoursesSlice";
 
 
 interface LearnerFormProps {
@@ -30,11 +32,14 @@ const LearnerForms = ({ onClose }: LearnerFormProps) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
 
-  const {
-    data: courses,
-    isLoading: coursesLoading,
-    error: coursesError,
-  } = useCourseList();
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(fetchCourses({}));
+  }, [dispatch]);
+
+  // Retrieve courses and their loading status from Redux.
+  const { courses } = useSelector((state: RootState) => state.adminCourses);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -385,12 +390,6 @@ const LearnerForms = ({ onClose }: LearnerFormProps) => {
                  
                  >
                     <option value="">Select Program</option>
-                    {coursesLoading && (
-                      <option disabled>Loading courses...</option>
-                    )}
-                    {coursesError && (
-                      <option disabled>Error loading courses</option>
-                    )}
 
                     {/* Safe array mapping */}
                     {Array.isArray(courses) &&

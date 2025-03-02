@@ -1,9 +1,9 @@
-import { useSelector } from "react-redux";
-import { RootState } from "@/lib/store";
-import { Learner } from "@/lib/types";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/lib/store";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import Image from "next/image";
-import { useCourseList } from "@/hooks/learner/useAuth";
+import { useEffect } from "react";
+import { fetchCourses } from "@/features/CoursesSlice";
 
 
 interface LearnerSideProfileProps {
@@ -21,15 +21,14 @@ export default function LearnerSideProfile({
       ? state.learner.learners.find((l) => l._id === learnerId)
       : null;
   });
+  const dispatch = useDispatch<AppDispatch>();
+  const { courses } = useSelector((state: RootState) => state.adminCourses);
+  // Fetch courses from Redux on mount
+  useEffect(() => {
+    dispatch(fetchCourses({}));
+  }, [dispatch]);
 
-  const {
-    data: courses,
-    isLoading: coursesLoading,
-    error: coursesError,
-  } = useCourseList();
-
-  const getCourseTitle = (courseId: string) => {
-    if (!courses || coursesLoading) return "Loading...";
+ const getCourseTitle = (courseId: string) => {
     const course = courses.find((course) => course._id === courseId);
     return course?.title || "";
   };
@@ -80,10 +79,7 @@ export default function LearnerSideProfile({
                   <span className="opacity-70">Paid</span>
                   <p className="font-medium">${learner.amount}</p>
                 </div>
-                {/* <div className="flex items-center justify-start gap-4">
-                             <span className="opacity-70">Bio</span>
-                             <p className="font-medium">{learner.description}</p>
-                         </div> */}
+              
                 <div className="grid grid-cols-[auto,1fr] items-start gap-8 md:gap-12 ">
                   <span className="opacity-70">Bio</span>
                   <p className="font-medium">{learner.description}</p>
