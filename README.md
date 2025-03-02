@@ -2,8 +2,8 @@
 
 A robust learner management system built with [Next.js](https://nextjs.org/) and styled using [Tailwind CSS](https://tailwindcss.com/). 
 
-![Admin Home Page](public/AdminHomePage.png)
-![Learner Home Page](public/LearnerHomePage.png)
+![Admin Home Page](/AdminHomePage.png)
+![Learner Home Page](/LearnerHomePage.png)
 
 
 ## Features
@@ -16,11 +16,11 @@ A robust learner management system built with [Next.js](https://nextjs.org/) and
 - **Admin Controls**:
 - **Empower administrators with robust management tools**:
 
- *Learner Management* : Admins can create, update, and delete learner profiles as needed.
+ - **Learner Management* : Admins can create, update, and delete learner profiles as needed.
 
-*Invoice Management*: Admins can generate, track, and manage invoices for paid courses. Easily monitor payment statuses (Paid/Pending) and resolve discrepancies.
+- *Invoice Management*: Admins can generate, track, and manage invoices for paid courses. Easily monitor payment statuses (Paid/Pending) and resolve discrepancies.
 
-*Course Management*: Admins can generate, track, create and manage courses for paid courses. 
+- *Course Management*: Admins can generate, track, create and manage courses for paid courses. 
 
 - **Responsive Design:** Fully responsive UI for a seamless experience on desktop and mobile devices.
 
