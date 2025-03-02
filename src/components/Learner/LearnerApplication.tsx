@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import { Divider, Spinner } from "@chakra-ui/react";
@@ -10,7 +8,7 @@ import { setCourseCreated, setCourseDetails } from "@/features/courseSlice";
 import { CourseDetails } from "@/features/courseSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/lib/store";
-import { useCourses } from "@/hooks/learner/useAuth";
+import { fetchLearnerCourses } from "@/features/courseSlice";
 
 interface Course {
   _id: string;
@@ -24,7 +22,7 @@ const LearnerApplication = () => {
   const [showApplication, setShowApplication] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Redux state
+  // Redux state for course application details
   const hasCreatedCourse = useSelector(
     (state: RootState) => state.course.hasCreatedCourse
   );
@@ -32,18 +30,34 @@ const LearnerApplication = () => {
     (state: RootState) => state.course.courseDetails
   );
 
-  // Course data fetching
-  const { courses, loading, error } = useCourses();
+  // Local state for fetched courses
+  const [learnerCourses, setLearnerCourses] = useState<Course[]>([]);
+  const [coursesLoading, setCoursesLoading] = useState(false);
+  const [coursesError, setCoursesError] = useState<string | null>(null);
 
-  // Get course by name
+  useEffect(() => {
+    setCoursesLoading(true);
+    dispatch(fetchLearnerCourses())
+      .unwrap()
+      .then((data: Course[]) => {
+        setLearnerCourses(data);
+        setCoursesLoading(false);
+      })
+      .catch((err) => {
+        setCoursesError(err);
+        setCoursesLoading(false);
+      });
+  }, [dispatch]);
+
+  // Helper: Get course by name using the program title
   const getCourseDataByName = (
     programName: string | undefined
   ): Course | null => {
-    if (!courses || !programName) return null;
-    return courses.find((course) => course.title === programName) || null;
+    if (!learnerCourses || !programName) return null;
+    return learnerCourses.find((course) => course.title === programName) || null;
   };
 
-  // Derived course data
+  // Derived course data using the courseDetails.program field
   const courseData = courseDetails?.program
     ? getCourseDataByName(courseDetails.program)
     : null;
@@ -59,10 +73,14 @@ const LearnerApplication = () => {
     setShowApplication(false);
   };
 
-  if (loading) return <div className="p-4 text-center"><Spinner size="lg" style={{color: "#186788"}} /></div>;
-  if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
-
-
+  if (coursesLoading)
+    return (
+      <div className="p-4 text-center">
+        <Spinner size="lg" style={{ color: "#186788" }} />
+      </div>
+    );
+  if (coursesError)
+    return <div className="p-4 text-red-500">Error: {coursesError}</div>;
 
   return (
     <div className="container mx-auto p-4">
@@ -89,14 +107,10 @@ const LearnerApplication = () => {
               />
             </button>
 
-          <div
-          className="flex items-center bg-casbBluePrimary text-white py-3 px-6 rounded w-80 md:w-64 justify-center hover:bg-casbBlueHover">
-            <button
-              onClick={handleClick}
-              className="whitespace-nowrap"
-            >
-              Start new application
-            </button>
+            <div className="flex items-center bg-casbBluePrimary text-white py-3 px-6 rounded w-80 md:w-64 justify-center hover:bg-casbBlueHover">
+              <button onClick={handleClick} className="whitespace-nowrap">
+                Start new application
+              </button>
               <Image
                 src="/chevron-right-white.png"
                 alt="chevron"
@@ -116,76 +130,62 @@ const LearnerApplication = () => {
         </div>
       ) : (
         <div>
-         
-        <div className=" flex flex-col mt-4 items-start md:items-center justify-start  gap-6 md:flex-row">
-          <div className="flex gap-2 md:block">
-            <h1 className="text-casbDisabled test-base lg:text-md">Program</h1>
-            <h1 className="font-semi-bold">
-              {courseDetails?.program}
-              
-</h1>
+          <div className="flex flex-col mt-4 items-start md:items-center justify-start gap-6 md:flex-row">
+            <div className="flex gap-2 md:block">
+              <h1 className="text-casbDisabled text-base lg:text-md">Program</h1>
+              <h1 className="font-semi-bold">{courseDetails?.program}</h1>
+            </div>
+            <span className="hidden md:block">
+              <Divider orientation="vertical" height="40px" mx={1} />
+            </span>
+            <div className="flex gap-2 md:block">
+              <h1 className="text-casbDisabled text-sm whitespace-nowrap">
+                Date registered
+              </h1>
+              <p className="font-semi-bold">
+                {courseDetails?.dateRegistered || "N/A"}
+              </p>
+            </div>
+            <span className="hidden md:block">
+              <Divider orientation="vertical" height="40px" mx={4} />
+            </span>
+            <div className="flex gap-2 md:block">
+              <h1 className="text-casbDisabled">Status</h1>
+              <p className="font-semi-bold">
+                {courseDetails?.status || "N/A"}
+              </p>
+            </div>
+            <span className="hidden md:block">
+              <Divider orientation="vertical" height="40px" mx={4} />
+            </span>
+            <div className="flex gap-2 md:block">
+              <h1 className="text-casbDisabled">Paid</h1>
+              <span className="font-semi-bold flex">
+                <p>&#162;</p>
+                {courseDetails?.amountPaid || "N/A"}
+              </span>
+            </div>
           </div>
-          <span className="hidden md:block">
-            <Divider orientation="vertical" height="40px" mx={1} />
-          </span>
-          <div className="flex gap-2 md:block">
-            <h1 className="text-casbDisabled  text-sm  whitespace-nowrap ">Date registered</h1>
-            <p className="font-semi-bold">{courseDetails?.dateRegistered || "N/A"}</p>
-          </div>
-          <span className="hidden md:block">
-            <Divider orientation="vertical" height="40px" mx={4} />
-          </span>
-
-          <div className="flex gap-2 md:block">
-            <h1 className="text-casbDisabled">Status</h1>
-            <p className="font-semi-bold">{courseDetails?.status || "N/A"}</p>
-          </div>
-          <span className="hidden md:block">
-            <Divider orientation="vertical" height="40px" mx={4} />
-          </span>
-
-          <div className="flex gap-2 md:block">
-            <h1 className="text-casbDisabled">Paid</h1>
-            <span className="font-semi-bold flex">
-              <p>&#162;</p>
-              {courseDetails?.amountPaid || "N/A"}</span>
-          </div>
-        </div>
 
           <Divider className="my-8" />
 
-        
-          <div className="mt-8">
-            {courseData?.stacks?.length ? (
-              <div className="flex flex-col md:flex-row gap-4">
+          {courseData && courseData.stacks && courseData.stacks.length > 0 && (
+            <div className="mt-8 flex flex-col md:flex-row gap-4">
               {courseData.stacks.map((stack, index) => {
-                // Array of border colors for different stacks
                 const borderColors = [
-                  '#28ACE2',
-                  '#77C053',
-                  '#A61D24',
-                  '#D89614',
-                  '#999999'
+                  "#28ACE2",
+                  "#77C053",
+                  "#A61D24",
+                  "#D89614",
+                  "#999999",
                 ];
-                
                 return (
                   <div
                     key={index}
-                    className={`
-                     
-                      p-3 rounded-lg 
-                      border 
-                      w-[100px] 
-                      h-[50px]
-                      flex items-center justify-center
-                      transition-all
-                      
-                      hover:shadow-md
-                    `}
+                    className="p-3 rounded-lg border w-[100px] h-[50px] flex items-center justify-center transition-all hover:shadow-md"
                     style={{
                       borderColor: borderColors[index % borderColors.length],
-                      // For hover effect (optional):
-                      transition: 'border-color 0.3s ease'
+                      transition: "border-color 0.3s ease",
                     }}
                   >
                     <span className="font-medium text-gray-700 text-center">
@@ -195,42 +195,33 @@ const LearnerApplication = () => {
                 );
               })}
             </div>
-            ) : (
-              <div className="text-gray-500 p-4 border rounded-lg bg-gray-50">
-                {courseData
-                  ? "No curriculum information available"
-                  : "Course data not loaded"}
-              </div>
-            )}
-          </div>
+          )}
 
           {/* Action Buttons */}
-            <div className="flex flex-col md:flex-row items-center justify-start gap-4 mt-8">
-                    <div className="flex items-center justify-center  cursor-pointer text-black py-3 rounded md:w-52 w-full bg-casbGreyPrimary">
-                      <button type="submit" className=" ">
-                        Home
-                      </button>
-                      <Image
-                        src="/chevron.png"
-                        alt="chevron"
-                        width={20}
-                        height={20}
-                        className="text-white"
-                      />
-                    </div>
-                    <div className="flex items-center justify-center  cursor-pointer text-white py-3 rounded md:w-64 w-full  bg-casbBluePrimary">
-                      <button type="submit" className=" " onClick={() => setShowApplication(true)}>
-                        Start new application
-                      </button>
-                      <Image
-                        src="/chevron-right-white.png"
-                        alt="chevron"
-                        width={20}
-                        height={20}
-                        className="text-white"
-                      />
-                    </div>
-                  </div>
+          <div className="flex flex-col md:flex-row items-center justify-start gap-4 mt-8">
+            <div className="flex items-center justify-center cursor-pointer text-black py-3 rounded md:w-52 w-full bg-casbGreyPrimary">
+              <button type="submit">Home</button>
+              <Image
+                src="/chevron.png"
+                alt="chevron"
+                width={20}
+                height={20}
+                className="ml-2"
+              />
+            </div>
+            <div className="flex items-center justify-center cursor-pointer text-white py-3 rounded md:w-64 w-full bg-casbBluePrimary">
+              <button type="submit" onClick={() => setShowApplication(true)}>
+                Start new application
+              </button>
+              <Image
+                src="/chevron-right-white.png"
+                alt="chevron"
+                width={20}
+                height={20}
+                className="ml-2"
+              />
+            </div>
+          </div>
         </div>
       )}
     </div>
