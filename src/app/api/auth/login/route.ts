@@ -52,7 +52,7 @@ export async function POST(request: Request) {
             sameSite: 'lax',
           })
 
-          console.log('token', token)
+          console.log('adminToken', token)
 
           return new Response(JSON.stringify({
             success: true,

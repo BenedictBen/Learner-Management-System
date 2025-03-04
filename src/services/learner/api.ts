@@ -121,12 +121,12 @@ export const registerCourse = async (data: any): Promise<void> => {
   try{
 
  
-  const response = await fetch(`${BASE_URL}/learners`, {
+  const response = await fetch('/api/auth/registerCourse', {
     method: "POST",
     headers: { 
       "Content-Type": "application/json",
-      // "Authorization": `Bearer ${localStorage.getItem("token")}`
     },
+    credentials: 'include', // Essential for cookies
     body: JSON.stringify(data),
   });
   if (!response.ok) {
@@ -145,8 +145,10 @@ export const registerCourse = async (data: any): Promise<void> => {
 };
 
 
+
+
 export const apiLogout = async (): Promise<void> => {
-  const response = await fetch(`${BASE_URL}/user/auth/logout`, {
+  const response = await fetch(`/api/auth/logout/learner`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
   });
@@ -154,18 +156,16 @@ export const apiLogout = async (): Promise<void> => {
 };
 
 export const courseList = async (): Promise<Course[]> => {
-  const response = await fetch(("/api/auth/courses"), {
-    method: "GET",
-    headers: { 
-      "Content-Type": "application/json",
-    },
-    
-  })
+  const response = await fetch("/auth/courses", {
+    credentials: 'include', // Crucial for cookies
+    headers: { "Content-Type": "application/json" }
+  });
+
   const data = await handleResponse(response);
-  // First check if response has the expected structure
+  
   if (!data.success || !Array.isArray(data.courses)) {
-    throw new Error('Invalid courses response format');
+    throw new Error(data.message || "Invalid response");
   }
 
-  return data.courses; // Return the nested array
-}
+  return data.courses;
+};

@@ -73,27 +73,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       }
     }),
-    Credentials({
-            id: "learner",
-            name: "Learner",
-            credentials: {
-              email: { label: "Email", type: "email" },
-              password: { label: "Password", type: "password" }
-            },
-            async authorize(credentials) {
-              if (!credentials?.email || !credentials?.password) return null;
+    // Credentials({
+    //         id: "learner",
+    //         name: "Learner",
+    //         credentials: {
+    //           email: { label: "Email", type: "email" },
+    //           password: { label: "Password", type: "password" }
+    //         },
+    //         async authorize(credentials) {
+    //           if (!credentials?.email || !credentials?.password) return null;
               
-              try {
-                const user = await validateUser(
-                  credentials.email.toString(),
-                  credentials.password.toString()
-                );
-                return { ...user, role: "user" };
-              } catch {
-                return null;
-              }
-            }
-          }),
+    //           try {
+    //             const user = await validateUser(
+    //               credentials.email.toString(),
+    //               credentials.password.toString()
+    //             );
+    //             return { ...user, role: "user" };
+    //           } catch {
+    //             return null;
+    //           }
+    //         }
+    //       }),
     
   ],
   secret: process.env.NEXTAUTH_SECRET!,

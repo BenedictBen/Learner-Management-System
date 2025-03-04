@@ -38,15 +38,15 @@ export async function POST(req: NextRequest) {
     if (!externalResponse.ok) {
       console.error("External API error response:", data);
       return NextResponse.json(
-        { success: false, message: "Failed to create invoice", details: data },
+        { success: false, message: "Failed to create learner", details: data },
         { status: externalResponse.status }
       );
     }
     return NextResponse.json(data, { status: externalResponse.status });
   } catch (error: any) {
-    console.error("Error creating invoice:", error);
+    console.error("Error creating learner:", error);
     return NextResponse.json(
-      { success: false, message: "Failed to create invoice" },
+      { success: false, message: "Failed to create learner" },
       { status: 500 }
     );
   }

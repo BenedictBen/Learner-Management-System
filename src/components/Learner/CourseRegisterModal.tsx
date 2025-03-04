@@ -1,15 +1,24 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { FormValues } from "@/lib/types";
+import {  Course, FormValues } from "@/lib/types";
 import { FieldIcons } from "@/lib/FormsIcons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRegisterCourse, useCourseList } from "@/hooks/learner/useAuth";
 import { Spinner, useToast } from "@chakra-ui/react";
 import { uploadImageToCloudinary } from "@/lib/cloudinary";
-import { setCourseDetails } from "@/features/courseSlice";
-import { useDispatch } from "react-redux";
+import { setCourseDetails,clearCourseState,fetchLearnerCourses } from "@/features/courseSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/lib/store";
+
+
+// Add debug logging interface
+interface DebugInfo {
+  coursesLoaded: boolean;
+  selectedCourse: Course | null;
+  apiPayload: any;
+}
 
 interface CourseRegister{
   onClose: () => void;
@@ -40,7 +49,7 @@ const CourseRegisterModal: React.FC<CourseRegister> = ({ onSuccess, onClose }) =
   const [focusPhone, setFocusPhone] = useState(false);
   const [focusUpload, setFocusUpload] = useState(false);
   const [focusAmount, setFocusAmount] = useState(false);
-
+  
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
 
@@ -48,15 +57,37 @@ const CourseRegisterModal: React.FC<CourseRegister> = ({ onSuccess, onClose }) =
 
   const toast = useToast();
   const { mutate: registerCourse, isPending } = useRegisterCourse();
-  const { data: courses, isLoading: coursesLoading, error: coursesError } = useCourseList();
+  // const { data: courses, isLoading: coursesLoading, error: coursesError } = useCourseList();
+  const [debugInfo, setDebugInfo] = useState<DebugInfo>({
+    coursesLoaded: false,
+    selectedCourse: null,
+    apiPayload: null
+  });
 
- const {
-     handleSubmit,
-     control,
-     register,
-     formState: { errors },
-     watch, clearErrors
-   } = useForm<FormValues>();
+  const {
+    handleSubmit,
+    control,
+    register,
+    formState: { errors },
+    watch, clearErrors
+  } = useForm<FormValues>();
+
+  // Add Redux course state access
+  const { learnerCourses, loading: coursesLoading, error: coursesError } = useSelector(
+    (state: RootState) => state.course
+  );
+
+  // Enhanced course logging
+  useEffect(() => {
+    console.log("[Debug] Current courses:", learnerCourses);
+    setDebugInfo(prev => ({
+      ...prev,
+      coursesLoaded: learnerCourses.length > 0,
+      selectedCourse: (learnerCourses as Course[]).find(c => c._id === watch("chooseModule")) || null
+    }));
+  }, [learnerCourses, watch("chooseModule")]);
+
+
    const [imagePreview, setImagePreview] = useState<string | null>(null);
 
    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,131 +102,358 @@ const CourseRegisterModal: React.FC<CourseRegister> = ({ onSuccess, onClose }) =
   };
 
  
-  const onSubmit = async (formData: FormValues) => {
-    console.log("Form Data Submitted:", formData);
+  const { courseDetails } = useSelector((state: RootState) => state.course);
 
-  // Validate required fields
-  if (!formData.firstName || !formData.lastName || !formData.email || !formData.location || !formData.phone || !formData.gender || !formData.chooseModule || !formData.amount) {
-    console.error("Missing required fields in form data");
-    return;
-  }
-
-    try {
-      // Validate image
-      if (!imageFile) {
-        setImageError("Image is required");
-        return;
-      }
-  
-      if (!(imageFile instanceof File)) {
-        setImageError("Invalid file type");
-        return;
-      }
-  
-      const maxSize = 5 * 1024 * 1024; // 5MB
-      if (imageFile.size > maxSize) {
-        setImageError("File size exceeds the limit (5MB)");
-        return;
-      }
-  
-      const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
-      if (!allowedTypes.includes(imageFile.type)) {
-        setImageError("Invalid file type (only JPEG, PNG, GIF allowed)");
-        return;
-      }
-
-      // Upload image to Cloudinary
-      const imageUrl = await uploadImageToCloudinary(imageFile);
-
-  
-      // Transform data to match API expectations
-      const apiData = {
-        firstname: formData.firstName.trim(),
-        lastname: formData.lastName.trim(),
-        email: formData.email.toLowerCase().trim(),
-        course: formData.chooseModule, // Should be course ID from fetched courses
-        gender: formData.gender,
-        location: formData.location.trim(),
-        phone: formData.phone.replace(/\D/g, ''), // Clean phone number
-       disability: formData.disabled === "true" ? "yes" : "no", // Match API boolean expectation
-        image: imageUrl,
-        description: formData.description.trim(),
-        amount: Number(formData.amount),
-      };
-  
-  
-      console.log('API Data:', apiData);
-
-      const today = new Date().toISOString().split("T")[0]; // Get today's date
-      // const details: CourseDetails = {
-      //   program: formData.chooseModule, // Assuming this is the program name
-      //   dateRegistered: today,
-      //   status: "Registered",
-      //   amountPaid: Number(formData.amount),
-      //   firstname: formData.firstName.trim(), // Add first name
-      //   lastname: formData.lastName.trim(), // Add last name
-      //   email: formData.email.toLowerCase().trim(), // Add email
-      //   gender: formData.gender, // Add gender
-      //   location: formData.location.trim(), // Add location
-      //   phone: formData.phone.replace(/\D/g, ""), // Add phone number
-      //   image: imageUrl, // Add image URL
-      // };
-  
-      const details: CourseDetails = {
-        program: courses?.find(c => c._id === formData.chooseModule)?.title || formData.chooseModule,
-        dateRegistered: new Date().toISOString().split("T")[0],
-        status: "Registered",
-        amountPaid: Number(formData.amount),
-        firstname: formData.firstName.trim(),
-        lastname: formData.lastName.trim(),
-        email: formData.email.toLowerCase().trim(),
-        gender: formData.gender,
-        location: formData.location.trim(),
-        phone: formData.phone.replace(/\D/g, ""),
-        image: imageUrl,
-      };
-      
-      console.log("Final Course Details:", details);
-      dispatch(setCourseDetails(details));
-      onSuccess(details);
-
-      registerCourse(apiData, {
-        onSuccess: () => {
-          toast({
-            title: "Registration Successful",
-            description: "Course registration completed",
-            status: "success",
-            duration: 5000,
-            isClosable: true,
-          });
-          onClose();
-          // onSuccess(details);
-        },
-
-        
-        onError: (error: any) => {
-          toast({
-            title: "Registration Failed",
-            description: error.message || "Please check your input and try again",
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-          });
-        },
-      });
-    } catch (error) {
-      console.error("Registration Error:", error); // Log the error for debugging
-      toast({
-        title: "Registration Error",
-        description: "An unexpected error occurred",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    }
-  };
  
    // Handle image preview
+
+//    const onSubmit = async (formData: FormValues) => {
+//     console.groupCollapsed("[Debug] Form Submission");
+//     try {
+//       // Validate courses first
+//       if (!Array.isArray(learnerCourses)) {
+//         console.error("Courses not loaded properly");
+//         toast({
+//           title: "Course Load Error",
+//           description: "Please refresh and try again",
+//           status: "error",
+//         });
+//         return;
+//       }
+
+//       const selectedCourse = learnerCourses.find(c => c._id === formData.chooseModule);
+//       console.log("[Debug] Selected Course:", selectedCourse);
+
+//       if (!selectedCourse) {
+//         console.error("Invalid course selection");
+//         toast({
+//           title: "Invalid Course",
+//           description: "Please select a valid course",
+//           status: "error",
+//         });
+//         return;
+//       }
+
+//       // Enhanced image validation
+//       if (!imageFile) {
+//         console.warn("[Validation] Image missing");
+//         setImageError("Image is required");
+//         return;
+//       }
+
+//       // Upload image
+//       console.log("[Debug] Starting image upload...");
+//       const imageUrl = await uploadImageToCloudinary(imageFile);
+//       console.log("[Debug] Image upload result:", imageUrl);
+
+//       // Construct API payload
+//       // const apiData = {
+//       //   ...formData,
+//       //   course: selectedCourse._id,
+//       //   program: selectedCourse.title,
+//       //   image: imageUrl,
+//       //   amount: Number(formData.amount),
+//       //   phone: formData.phone.replace(/\D/g, '')
+//       // };
+
+//       // Before
+// // const apiData = {
+// //   ...formData,
+// //   course: selectedCourse._id,
+// //   program: selectedCourse.title,
+// //   image: imageUrl,
+// //   amount: Number(formData.amount),
+// //   phone: formData.phone.replace(/\D/g, '')
+// // };
+
+// // After (fix field names)
+// const apiData = {
+//   firstname: formData.firstName, // Convert to snake_case
+//   lastname: formData.lastName,   // Convert to snake_case
+//   email: formData.email,
+//   location: formData.location,
+//   course: selectedCourse._id,
+//   program: selectedCourse.title,
+//   image: imageUrl,
+//   amount: Number(formData.amount),
+//   phone: formData.phone.replace(/\D/g, ''),
+//   gender: formData.gender,
+//   disabled: formData.disabled === "true" // Convert to boolean if needed
+// };
+
+//       console.log("[Debug] Final API Payload:", apiData);
+//       setDebugInfo(prev => ({ ...prev, apiPayload: apiData }));
+
+//       // Dispatch registration
+//       registerCourse(apiData, {
+//         onSuccess: (response) => {
+//           console.log("[Debug] Registration success:", response);
+//           const details: CourseDetails = {
+//             program: selectedCourse.title,
+//             dateRegistered: new Date().toISOString().split("T")[0],
+//             status: "Registered",
+//             amountPaid: Number(formData.amount),
+//             firstname: formData.firstName.trim(),
+//             lastname: formData.lastName.trim(),
+//             email: formData.email.toLowerCase().trim(),
+//             gender: formData.gender,
+//             location: formData.location.trim(),
+//             phone: formData.phone.replace(/\D/g, ""),
+//             image: imageUrl,
+//           };
+
+//           console.log("[Debug] Dispatching course details:", details);
+//           dispatch(setCourseDetails(details));
+//           onSuccess(details);
+
+//           toast({
+//             title: "Registration Successful",
+//             description: `Enrolled in ${selectedCourse.title}`,
+//             status: "success",
+//           });
+//           onClose();
+//         },
+//         onError: (error) => {
+//           console.error("[Debug] Registration error:", error);
+//           toast({
+//             title: "Registration Failed",
+//             description: error.message,
+//             status: "error",
+//           });
+//         }
+//       });
+//     } catch (error) {
+//       console.error("[Debug] Unexpected error:", error);
+//     } finally {
+//       console.groupEnd();
+//     }
+//   };
+
+// const onSubmit = async (formData: FormValues) => {
+//   try {
+//     if (!Array.isArray(learnerCourses)) {
+//       console.error("Courses not loaded properly");
+//       toast({
+//         title: "Course Load Error",
+//         description: "Please refresh and try again",
+//         status: "error",
+//       });
+//       return;
+//     }
+
+//     const selectedCourse = learnerCourses.find(c => c._id === formData.chooseModule);
+//     if (!selectedCourse) {
+//       console.error("Invalid course selection");
+//       toast({
+//         title: "Invalid Course",
+//         description: "Please select a valid course",
+//         status: "error",
+//       });
+//       return;
+//     }
+
+//     if (courseDetails && courseDetails.program === selectedCourse.title) {
+//       toast({
+//         title: "Already Registered",
+//         description: "You are already enrolled in this course.",
+//         status: "warning",
+//       });
+//       return;
+//     }
+
+//     if (!imageFile) {
+//       setImageError("Image is required");
+//       return;
+//     }
+
+//     const imageUrl = await uploadImageToCloudinary(imageFile);
+//     const apiData = {
+//       firstname: formData.firstName,
+//       lastname: formData.lastName,
+//       email: formData.email,
+//       location: formData.location,
+//       course: selectedCourse._id,
+//       program: selectedCourse.title,
+//       image: imageUrl,
+//       amount: Number(formData.amount),
+//       phone: formData.phone.replace(/\D/g, ''),
+//       gender: formData.gender,
+//       disabled: formData.disabled === "true",
+//     };
+
+//     registerCourse(apiData, {
+//       onSuccess: (response) => {
+//         const details: CourseDetails = {
+//           program: selectedCourse.title,
+//           dateRegistered: new Date().toISOString().split("T")[0],
+//           status: "Registered",
+//           amountPaid: Number(formData.amount),
+//           firstname: formData.firstName.trim(),
+//           lastname: formData.lastName.trim(),
+//           email: formData.email.toLowerCase().trim(),
+//           gender: formData.gender,
+//           location: formData.location.trim(),
+//           phone: formData.phone.replace(/\D/g, ""),
+//           image: imageUrl,
+//         };
+//         dispatch(setCourseDetails(details));
+//         onSuccess(details);
+//         toast({
+//           title: "Registration Successful",
+//           description: `Enrolled in ${selectedCourse.title}`,
+//           status: "success",
+//         });
+//         onClose();
+//       },
+//       onError: (error) => {
+//         console.error("[Debug] Registration error:", error);
+//         toast({
+//           title: "Registration Failed",
+//           description: error.message || "An unexpected error occurred",
+//           status: "error",
+//         });
+//         dispatch(clearCourseState()); // Clear course details
+//         onClose(); 
+//       },
+//     });
+//   } catch (error) {
+//     console.error("[Debug] Unexpected error:", error);
+//   }
+// };
+const onSubmit = async (formData: FormValues) => {
+  console.log("Form Data Submitted:", formData);
+
+// Validate required fields
+if (!formData.firstName || !formData.lastName || !formData.email || !formData.location || !formData.phone || !formData.gender || !formData.chooseModule || !formData.amount) {
+  console.error("Missing required fields in form data");
+  return;
+}
+const selectedCourse = learnerCourses.find(c => c._id === formData.chooseModule);
+    if (!selectedCourse) {
+      console.error("Invalid course selection");
+      toast({
+        title: "Invalid Course",
+        description: "Please select a valid course",
+        status: "error",
+      });
+      return;
+    }
+    
+  try {
+    // Validate image
+    if (!imageFile) {
+      setImageError("Image is required");
+      return;
+    }
+
+    if (!(imageFile instanceof File)) {
+      setImageError("Invalid file type");
+      return;
+    }
+
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (imageFile.size > maxSize) {
+      setImageError("File size exceeds the limit (5MB)");
+      return;
+    }
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
+    if (!allowedTypes.includes(imageFile.type)) {
+      setImageError("Invalid file type (only JPEG, PNG, GIF allowed)");
+      return;
+    }
+
+    // Upload image to Cloudinary
+    const imageUrl = await uploadImageToCloudinary(imageFile);
+
+
+    // Transform data to match API expectations
+    const apiData = {
+      firstname: formData.firstName.trim(),
+      lastname: formData.lastName.trim(),
+      email: formData.email.toLowerCase().trim(),
+      course: selectedCourse._id,
+      program: selectedCourse.title, // Should be course ID from fetched courses
+      gender: formData.gender,
+      location: formData.location.trim(),
+      phone: formData.phone.replace(/\D/g, ''), // Clean phone number
+     disability: formData.disabled === "true" ? "yes" : "no", // Match API boolean expectation
+      image: imageUrl,
+      description: formData.description.trim(),
+      amount: Number(formData.amount),
+    };
+
+
+    console.log('API Data:', apiData);
+
+    const today = new Date().toISOString().split("T")[0]; // Get today's date
+    // const details: CourseDetails = {
+    //   program: formData.chooseModule, // Assuming this is the program name
+    //   dateRegistered: today,
+    //   status: "Registered",
+    //   amountPaid: Number(formData.amount),
+    //   firstname: formData.firstName.trim(), // Add first name
+    //   lastname: formData.lastName.trim(), // Add last name
+    //   email: formData.email.toLowerCase().trim(), // Add email
+    //   gender: formData.gender, // Add gender
+    //   location: formData.location.trim(), // Add location
+    //   phone: formData.phone.replace(/\D/g, ""), // Add phone number
+    //   image: imageUrl, // Add image URL
+    // };
+
+    const details: CourseDetails = {
+      program: selectedCourse.title,
+      dateRegistered: new Date().toISOString().split("T")[0],
+      status: "Registered",
+      amountPaid: Number(formData.amount),
+      firstname: formData.firstName.trim(),
+      lastname: formData.lastName.trim(),
+      email: formData.email.toLowerCase().trim(),
+      gender: formData.gender,
+      location: formData.location.trim(),
+      phone: formData.phone.replace(/\D/g, ""),
+      image: imageUrl,
+    };
+    
+    console.log("Final Course Details:", details);
+    dispatch(setCourseDetails(details));
+    onSuccess(details);
+
+    registerCourse(apiData, {
+      onSuccess: () => {
+        toast({
+          title: "Registration Successful",
+          description: "Course registration completed",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+        onClose();
+        // onSuccess(details);
+      },
+
+      
+      onError: (error: any) => {
+        toast({
+          title: "Registration Failed",
+          description: error.message || "Please check your input and try again",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      },
+    });
+  } catch (error) {
+    console.error("Registration Error:", error); // Log the error for debugging
+    toast({
+      title: "Registration Error",
+      description: "An unexpected error occurred",
+      status: "error",
+      duration: 5000,
+      isClosable: true,
+    });
+  }
+};
 
 
   return (
@@ -474,16 +732,14 @@ const CourseRegisterModal: React.FC<CourseRegister> = ({ onSuccess, onClose }) =
                       : "border-gray-300"
                   }`}
                 >
-                  <option value="">Choose module</option>
-  {coursesLoading && <option disabled>Loading courses...</option>}
-  {coursesError && <option disabled>Error loading courses</option>}
+ 
   
-  {/* Safe array mapping */}
-  {Array.isArray(courses) && courses.map((course) => (
-    <option key={course._id} value={course._id}>
-      {course.title}
-    </option>
-  ))}
+  <option value="">Choose Course</option>
+    {learnerCourses.map(course => (
+      <option key={course._id} value={course._id}>
+        {course.title} 
+      </option>
+    ))}
                 </select>
                 <Image
                   src={FieldIcons.chooseModule as string}

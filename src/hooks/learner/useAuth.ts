@@ -17,6 +17,8 @@ import {
   setVerificationToken,
   clearTemporaryPassword,
 } from "../../features/authSlice";
+
+import {  learnerLogout } from "@/features/learnerAuthSlice"
 import { useRouter } from "next/navigation";
 import { useToast } from "@chakra-ui/react";
 import { RootState } from "@/lib/store";
@@ -76,7 +78,7 @@ export const useOtpVerify = () => {
         }
 
         // 4. Update auth state and storage
-        dispatch(signin({ email, id }));
+        // dispatch(signin({ email, id }));
         localStorage.setItem("userEmail", email);
         localStorage.setItem("userId", id);
 
@@ -113,26 +115,26 @@ export const useOtpVerify = () => {
   });
 };
 
-export const useLogin = () => {
-  const dispatch = useDispatch();
-  const router = useRouter();
+// export const useLogin = () => {
+//   const dispatch = useDispatch();
+//   const router = useRouter();
 
-  return useMutation({
-    mutationFn: login,
-    onSuccess: (data: { email: string; id: string }) => {
-      // Store user information in localStorage
-      localStorage.setItem("userEmail", data.email);
-      localStorage.setItem("userId", data.id);
+//   return useMutation({
+//     mutationFn: login,
+//     onSuccess: (data: { email: string; id: string }) => {
+//       // Store user information in localStorage
+//       localStorage.setItem("userEmail", data.email);
+//       localStorage.setItem("userId", data.id);
 
-      // Dispatch the signin action to update Redux state
-      dispatch(signin({ email: data.email, id: data.id }));
+//       // Dispatch the signin action to update Redux state
+//       dispatch(signin({ email: data.email, id: data.id }));
 
-      // Redirect the user to the learner dashboard
-      router.push("/learner/dashboard");
-    },
+//       // Redirect the user to the learner dashboard
+//       router.push("/learner/dashboard");
+//     },
     
-  });
-};
+//   });
+// };
 
 
 export const useForgotPassword = () => {
@@ -169,19 +171,27 @@ export const useRegisterCourse = () => {
   });
 };
 
+// hooks/useLogout.ts
 export const useLogout = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
   return useMutation({
     mutationFn: apiLogout,
+
     onSuccess: () => {
-      dispatch(logout());
-      router.push("/login");
+      // Reset Redux state
+      // document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;';
+      dispatch(learnerLogout());
+      dispatch(clearCourseState());
+
+      // Force full page reload
+      router.push('/learner');
+      // setTimeout(() => window.location.reload(), 100);
     },
     onError: (error) => {
       console.error("Logout failed:", error);
-      // Handle logout failure if needed
+      // Consider showing error toast
     },
   });
 };
@@ -198,6 +208,7 @@ export const useCourseList = () => {
 
 // hooks/useCourses.ts
 import { useState, useEffect } from "react";
+import { clearCourseState } from "@/features/courseSlice";
 
 export const useCourses = () => {
   const [courses, setCourses] = useState<any[]>([]);

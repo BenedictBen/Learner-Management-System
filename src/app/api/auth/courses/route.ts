@@ -6,7 +6,7 @@ import { cookies } from 'next/headers';
 import { Course } from '@/lib/types';
 
 async function fetchCourses(): Promise<Course[]> {
-  const courseeUrl = 'https://tmp-se-project.azurewebsites.net/api/courses'; // note: removed extra slash
+  const courseUrl = 'https://tmp-se-project.azurewebsites.net/api/courses'; // note: removed extra slash
   const cookieStore = await cookies()
     const token = cookieStore.get('token')?.value
   if (!token) return [];
@@ -18,7 +18,7 @@ async function fetchCourses(): Promise<Course[]> {
   };
 
   try {
-    const res = await fetch(courseeUrl, {
+    const res = await fetch(courseUrl, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,

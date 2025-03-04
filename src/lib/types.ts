@@ -29,16 +29,6 @@ export type FormValues = {
   paymentDetails: string
 }
 
-export interface Course {
-  _id: string;
-  title: string;
-  price: number;
-  duration: string;
-  instructor: string;
-  learners: string;
-  image: string;
-
-}
 
 // Add this interface definition at the top of your file
 export interface Invoice {
@@ -89,6 +79,7 @@ export interface Course {
   stacks: string[]; 
   descriptions: string;
   createdAt: string;
+
 }
 
 // src/lib/types.ts

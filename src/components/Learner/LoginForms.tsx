@@ -8,13 +8,14 @@ import { FieldIcons } from "@/lib/FormsIcons";
 import { Spinner } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 import { useLogin } from "@/hooks/learner/useAuth"
-
+import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 
 
 import { handleGoogleSignIn } from '@/actions/auth-actions';
 // import { signIn } from "@/googleAuth/googleAuth";
 import { signIn,useSession } from "next-auth/react";
+import { signin } from "@/features/learnerAuthSlice";
 
 
 interface LoginFormsProps {
@@ -36,23 +37,9 @@ const { data: session, status } = useSession();
   const togglePasswordVisibility = (): void => {
     setShowPassword(!showPassword);
   };
-// Add this useEffect to your login component
-// useEffect(() => {
-//   const urlParams = new URLSearchParams(window.location.search);
-//   const error = urlParams.get('error');
-  
-//   if (error === 'AuthenticationFailed') {
-//     toast({
-//       title: "Authentication Failed",
-//       description: "Invalid email or password",
-//       status: "error",
-//       duration: 5000,
-//       isClosable: true,
-//     });
-//   }
-// }, []);
+
   const toast = useToast();
-  const { mutate: login, isPending } = useLogin();
+  const dispatch = useDispatch();
 
   const {
     handleSubmit,
@@ -61,40 +48,40 @@ const { data: session, status } = useSession();
     watch,
   } = useForm<FormValues>();
 
-  useEffect(() => {
-    if (status === "authenticated") {
-      if (session?.user?.role === "user") {
-        router.push("/learner");
-      } else {
+  const handleLogin = async (data: FormValues) => {
+    const loginEndpoint = "/api/auth/login/learner";
+    setIsLoading(true);
+    try {
+      const response = await fetch(loginEndpoint, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      const result = await response.json();
+  
+      if (result.success && result.user) {
+        // Transform API response to match learnerAuthSlice format
+        const learnerData = {
+          email: result.user.email,
+          id: result.user._id, // Map _id to id
+        };
+  
+        // Dispatch to learner auth slice
+        dispatch(signin(learnerData));
+  
         toast({
-          title: "Access Denied",
-          description: "You don't have admin privileges",
-          status: "error",
+          title: "Login Successful",
+          description: "You're now logged in as a learner",
+          status: "success",
           duration: 5000,
           isClosable: true,
         });
-      }  
-    }
-  }, [status, session, router, toast]);
-  const handleLogin = async (data: FormValues) => {
-    setIsLoading(true);
-    try {
-      const result = await signIn('learner', {
-        email: data.email,
-        password: data.password,
-        redirect: false,
-      });
-  
-      if (result?.error) {
-        let errorMessage = "Invalid email or password";
-        if (result.error === "CredentialsSignin") {
-          errorMessage = "Invalid email or password combination";
-        }
-        throw new Error(errorMessage);
-      }
-  
-      if (result?.ok) {
-        router.push('/learner');
+        router.push("/learner");
+      } else {
+        throw new Error(result.message || "Learner login failed");
       }
     } catch (error: any) {
       toast({
@@ -104,6 +91,7 @@ const { data: session, status } = useSession();
         duration: 5000,
         isClosable: true,
       });
+      console.error("Learner login error:", error);
     } finally {
       setIsLoading(false);
     }

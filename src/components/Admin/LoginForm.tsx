@@ -7,7 +7,7 @@ import Image from "next/image";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import {signOut  } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import { Spinner, useToast } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 
@@ -48,9 +48,9 @@ const LoginForm = () => {
           "Content-Type": "application/json",
         },
       });
-  
+
       const result = await response.json();
-  
+
       if (result.success && result.Admin) {
         // Transform the API response to match your AdminUser interface
         const adminUser: AdminUser = {
@@ -63,11 +63,10 @@ const LoginForm = () => {
           // Optionally include name, though your reducer will compute it
           name: `${result.Admin.first_name} ${result.Admin.last_name}`,
         };
-  
+
         // Dispatch the signin action with the correctly formatted adminUser
         dispatch(signin(adminUser));
-        await signOut({ redirect: false });
-      
+        // await signOut({ redirect: false });
 
         toast({
           title: "Login Successful",
@@ -129,10 +128,9 @@ const LoginForm = () => {
                   errors.email
                     ? "!bg-red-100 border-gray-300"
                     : watch("email")
-                   ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
-                      : "border-blue-500 bg-white dark:bg-black dark:text-white"
+                    ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
+                    : "border-blue-500 bg-white dark:bg-black dark:text-white"
                 } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300`}
-              
               />
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex gap-2 items-center">
                 {errors.email && (
@@ -194,10 +192,9 @@ const LoginForm = () => {
                   errors.password
                     ? "!bg-red-100 border-gray-300"
                     : watch("password")
-                   ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
-                      : "border-blue-500 bg-white dark:bg-black dark:text-white"
+                    ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
+                    : "border-blue-500 bg-white dark:bg-black dark:text-white"
                 } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300`}
-              
               />
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2 flex gap-2 items-center">
                 <div

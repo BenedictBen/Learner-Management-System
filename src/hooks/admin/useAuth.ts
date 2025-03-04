@@ -113,7 +113,7 @@ export const useLogout = () => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  return useMutation({
+  return useMutation({ 
     mutationFn: apiLogout,
     onSuccess: () => {
       
