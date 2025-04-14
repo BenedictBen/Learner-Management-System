@@ -183,7 +183,7 @@ const LoginForms: React.FC<LoginFormsProps> = ({ onForgotPasswordClick, onSignup
     <h1 className="text-center font-bold text-xl text-black mb-2">Login</h1>
         
         <div className="flex items-center justify-center mb-2">
-          <div className="border border-casbBluePrimary w-80 px-6 py-2 flex items-center justify-center gap-1 ">
+          <div className="border border-casbBluePrimary w-80 !px-6 !py-2 flex items-center justify-center gap-1 ">
             <Image src="/Google.png" alt="google" width={15} height={15} />
             {isGoogleLoading ? (
   <Spinner size="sm" color="blue.500" thickness="4px" speed="0.65s" />
