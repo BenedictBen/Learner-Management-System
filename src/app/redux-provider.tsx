@@ -16,16 +16,16 @@ export default function ReduxProvider({
     <SessionInitializer>
 
     
-    <SessionProvider>
+    {/* <SessionProvider>
 
-    <AuthInitializer>
+
+    </SessionProvider> */}
+    {/* <AuthInitializer>
+    </AuthInitializer> */}
       <PersistGate persistor={persistor}>
       
     {children}
       </PersistGate>
-    </AuthInitializer>
-
-    </SessionProvider>
     </SessionInitializer>
     </Provider>;
 }

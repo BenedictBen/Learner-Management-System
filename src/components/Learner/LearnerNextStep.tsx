@@ -18,27 +18,28 @@ const LearnerNextStep = () => {
 
   return (
     <div>
-      <div className="bg-casbBluePrimary w-full  py-12 text-white">
+      <div className="bg-casbBluePrimary w-full py-12 text-white">
         <div className='flex items-center justify-center flex-col gap-3 mb-7'>
           <h1 className='font-bold text-2xl'>What will be next step</h1>
-          <p className='w-2/5 text-center text-sm'>
+          <p className='px-6 text-center text-sm'>
             Discover our diverse stack of solutions, including software development, data science, and cloud tools.
             Sign up today and kickstart your journey!
           </p>
         </div>
 
-        <div className="container flex items-center justify-center mx-auto ">
-          <div className="grid place-items-center sm:grid-cols-4 sm:grid-rows-4 lg:grid-cols-6 lg:grid-rows-2 gap-5">
-            {courses.map((course) => (
-              <div
-                key={course.id}
-                className="flex items-center justify-center border h-8 w-20 "
-                style={{ borderColor: course.color }}
-              >
-                {course.title}
-              </div>
-            ))}
-          </div>
+        <div className="container flex items-center justify-center mx-auto w-full">
+        <div className="grid place-items-center grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4 lg:gap-6">
+  {courses.map((course) => (
+    <div
+      key={course.id}
+      className="flex items-center justify-center border h-8 w-20"
+      style={{ borderColor: course.color }}
+    >
+      {course.title}
+    </div>
+  ))}
+</div>
+
         </div>
       </div>
     </div>

@@ -11,18 +11,20 @@ import {
 } from "../../services/learner/api";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  signin,
-  logout,
   setPendingEmail,
   setVerificationToken,
   clearTemporaryPassword,
 } from "../../features/authSlice";
+import { useState, useEffect } from "react";
+import {  clearCourseState } from "@/features/courseSlice";
 
 import {  learnerLogout } from "@/features/learnerAuthSlice"
 import { useRouter } from "next/navigation";
 import { useToast } from "@chakra-ui/react";
 import { RootState } from "@/lib/store";
 import { signIn } from "next-auth/react";
+
+
 
 export const useSignup = () => {
   const dispatch = useDispatch();
@@ -115,27 +117,6 @@ export const useOtpVerify = () => {
   });
 };
 
-// export const useLogin = () => {
-//   const dispatch = useDispatch();
-//   const router = useRouter();
-
-//   return useMutation({
-//     mutationFn: login,
-//     onSuccess: (data: { email: string; id: string }) => {
-//       // Store user information in localStorage
-//       localStorage.setItem("userEmail", data.email);
-//       localStorage.setItem("userId", data.id);
-
-//       // Dispatch the signin action to update Redux state
-//       dispatch(signin({ email: data.email, id: data.id }));
-
-//       // Redirect the user to the learner dashboard
-//       router.push("/learner/dashboard");
-//     },
-    
-//   });
-// };
-
 
 export const useForgotPassword = () => {
   return useMutation({
@@ -174,6 +155,7 @@ export const useRegisterCourse = () => {
 // hooks/useLogout.ts
 export const useLogout = () => {
   const dispatch = useDispatch();
+ 
   const router = useRouter();
 
   return useMutation({
@@ -206,9 +188,6 @@ export const useCourseList = () => {
   });
 };
 
-// hooks/useCourses.ts
-import { useState, useEffect } from "react";
-import { clearCourseState } from "@/features/courseSlice";
 
 export const useCourses = () => {
   const [courses, setCourses] = useState<any[]>([]);

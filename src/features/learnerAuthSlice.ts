@@ -103,7 +103,7 @@ learnerLogout(state) {
 });
 
 export const {
-    learnerLoadSession,
+  learnerLoadSession,
   signin,
   learnerLogout,
   setPendingEmail,

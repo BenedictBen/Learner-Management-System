@@ -13,7 +13,6 @@ import {
   setTemporaryPassword,
   setVerificationToken,
 } from "@/features/authSlice";
-import { handleGoogleSignIn } from "@/actions/auth-actions";
 import { useRouter } from "next/navigation";
 
 const SignupForm = () => {
@@ -49,6 +48,55 @@ const SignupForm = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
+  // const onSubmit = async (data: FormValues): Promise<void> => {
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await fetch("/api/auth/signup", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         first_name: data.firstName,
+  //         last_name: data.lastName,
+  //         email: data.email,
+  //         password: data.password,
+  //         contact: data.contact,
+  //       }),
+  //     });
+
+  //     const result = await response.json();
+
+  //     if (!response.ok || !result.success) {
+  //       // You can inspect the structure of result here if needed
+  //       const errorMessage = result.message || "Signup failed. Please try again.";
+  //       throw new Error(errorMessage);
+  //     }
+
+  //     if(result.success) {
+  //       if(result.user) { 
+  //         const { email, verificationToken } = result.user;
+  //         dispatch(setPendingEmail(email));
+  //         dispatch(setVerificationToken(verificationToken));
+  //         console.log("Stored email:", email);
+  //         console.log("Stored verification token:", verificationToken);
+  //       }
+  //       router.push("/admin/otp");
+  //     }else {
+  //       throw new Error(result.message || "Signup failed");
+  //     } 
+  //   } catch (error: any) {
+  //     toast({
+  //       title: "Signup Failed",
+  //       description: error.message,
+  //       status: "error",
+  //       duration: 5000,
+  //       isClosable: true,
+  //     });
+  //     console.error("Signup error:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const onSubmit = async (data: FormValues): Promise<void> => {
     setIsLoading(true);
     try {
@@ -63,29 +111,34 @@ const SignupForm = () => {
           contact: data.contact,
         }),
       });
-
+  
       const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.message || "Signup request failed");
+  
+      if (!response.ok || !result.success) {
+        // You can inspect the structure of result here if needed
+        const errorMessage = result.message || "Signup failed. Please try again.";
+        throw new Error(errorMessage);
       }
-
-      if(result.success) {
-        if(result.user) { 
-          const { email, verificationToken } = result.user;
-          dispatch(setPendingEmail(email));
-          dispatch(setVerificationToken(verificationToken));
-          console.log("Stored email:", email);
-          console.log("Stored verification token:", verificationToken);
-        }
-        router.push("/admin/otp");
-      }else {
-        throw new Error(result.message || "Signup failed");
-      }
+  
+      // Proceed if signup is successful
+      const { email, verificationToken } = result.user;
+      dispatch(setPendingEmail(email));
+      dispatch(setVerificationToken(verificationToken));
+      toast({
+        title: "Signup successful",
+        description: result.message || "Sign up sucessfully",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      console.log("Stored email:", email);
+      console.log("Stored verification token:", verificationToken);
+      router.push("/admin/otp");
+      
     } catch (error: any) {
       toast({
         title: "Signup Failed",
-        description: error.message,
+        description: error.message || "An unexpected error occurred.",
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -95,6 +148,7 @@ const SignupForm = () => {
       setIsLoading(false);
     }
   };
+  
 
 
   const password = watch("password");

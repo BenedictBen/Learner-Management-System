@@ -1,3 +1,5 @@
+"use client"
+
 import { FormValues } from '@/lib/types';
 import { FieldIcons } from "@/lib/FormsIcons";
 import Image from 'next/image';
@@ -6,9 +8,10 @@ import { useForm } from 'react-hook-form';
 import { useSignup } from "@/hooks/learner/useAuth"
 import { Spinner, useToast } from "@chakra-ui/react";
 import { useDispatch } from 'react-redux';
-import { setPendingEmail,setTemporaryPassword,setVerificationToken } from "@/features/authSlice";
-import { handleGoogleSignIn } from '@/actions/auth-actions';
-
+import { setPendingEmail,setVerificationToken } from "@/features/learnerAuthSlice";
+// import { handleGoogleSignIn } from '@/actions/auth-actions';
+import { useRouter } from 'next/navigation';
+import { signIn } from "next-auth/react";
 
 interface SignupFormProps {
     onVerificationClick: () => void;
@@ -39,6 +42,7 @@ interface SignupFormProps {
         const { mutate: signup, isPending } = useSignup();
         const toast = useToast();
         const dispatch = useDispatch();
+        const router = useRouter();
 
       const {
         handleSubmit,
@@ -47,78 +51,49 @@ interface SignupFormProps {
         watch,
       } = useForm<FormValues>();
 
-
-      // const handleSignUp = async (data: FormValues) => {
-      //   setIsLoading(true);
-      //   try {
-      //     const result = await signIn('credentials', {
-      //             email: data.email,
-      //             password: data.password,
-      //             redirect: false,
-      //           });
-            
-      //           if (result?.error) {
-      //             let errorMessage = "Invalid email or password";
-      //             if (result.error === "CredentialsSignin") {
-      //               errorMessage = "Invalid email or password combination";
-      //             }
-      //             throw new Error(errorMessage);
-      //           }
-            
-      //           if (result?.ok) {
-      //             const { email, verificationToken } = result;
-      //       dispatch(setPendingEmail(email));
-      //       dispatch(setVerificationToken(verificationToken))
-      //       console.log('Stored email:', email);
-      // console.log('Stored verification token:', verificationToken);
-      //             onVerificationClick()
-      //           }
-      //   } catch(error: any){
-      //     toast({
-      //       title: "Login Failed",
-      //       description: error.message,
-      //       status: "error",
-      //       duration: 5000,
-      //       isClosable: true,
-      //     });
-      //   } finally {
-      //     setIsLoading(false);
-      //   }
-      // }
-    
-
-
-
-
-      const onSubmit = (data: FormValues): void => {
-        const payload = {
-          email: data.email,
-          password: data.password 
-        };
-        signup(payload, {
-          onSuccess: (responseData) => {
-            // Store email in Redux and localStorage
-            const { email, verificationToken } = responseData.user;
-            dispatch(setPendingEmail(email));
-            dispatch(setVerificationToken(verificationToken))
-            dispatch(setTemporaryPassword(data.password)); 
-            console.log('Stored email:', email);
-      console.log('Stored verification token:', verificationToken);
-            // Trigger verification modal
-            onVerificationClick();
-          },  
-          onError: (error) => {
+      const onSubmit = async (data: FormValues): Promise<void> => {
+          setIsLoading(true);
+          try {
+            const response = await fetch("/api/auth/signup/learner", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                email: data.email,
+                password: data.password,
+              }),
+            });
+      
+            const result = await response.json();
+      
+            if (!response.ok) {
+              throw new Error(result.message || "Signup request failed");
+            }
+      
+            if(result.success) {
+              if(result.user) { 
+                const { email, verificationToken } = result.user;
+                dispatch(setPendingEmail(email));
+                dispatch(setVerificationToken(verificationToken));
+                console.log("Stored email:", email);
+                console.log("Stored verification token:", verificationToken);
+              }
+              onVerificationClick()
+            }else {
+              throw new Error(result.message || "Signup failed");
+            }
+          } catch (error: any) {
             toast({
-              title: "Login Failed",
+              title: "Signup Failed",
               description: error.message,
               status: "error",
               duration: 5000,
               isClosable: true,
             });
+            console.error("Signup error:", error);
+          } finally {
+            setIsLoading(false);
           }
-        })
-       
-      };
+        };
 
       const password = watch('password');
       const confirmPassword = watch('confirmPassword');
@@ -127,6 +102,14 @@ interface SignupFormProps {
         return value === watch('password') || 'Passwords do not match';
       };
 
+
+    const handleGoogleSignup = () => {   
+        signIn("google", {
+          callbackUrl: "/learner",
+        })
+      };
+
+
   return (
     <div>
         <h1 className="text-center font-bold text-xl text-black mb-2">Signup</h1>
@@ -134,8 +117,8 @@ interface SignupFormProps {
                 <div className="flex items-center justify-center mb-2">
                   <div className="border border-casbBluePrimary w-80 mx-auto py-1 flex items-center justify-center gap-1 ">
                     <Image src="/Google.png" alt="google" width={15} height={15} />
-                    <form action={handleGoogleSignIn}>
-                      <button>Signup using Google</button>
+                    <form>
+                      <button   onClick={handleGoogleSignup}>Signup using Google</button>
                     </form>
                   </div>
                 </div>
@@ -393,7 +376,7 @@ interface SignupFormProps {
         </div>
                 
                     {/* Submit Button */}
-                        {isPending ? (
+                        {isLoading ? (
           <div className="flex items-center justify-center gap-2 w-full bg-casbBluePrimary text-white py-2 rounded hover:bg-blue-600">
             <Spinner size="sm" color="blue-500" />
             <span>Registering...</span>

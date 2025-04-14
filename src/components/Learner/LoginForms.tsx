@@ -7,15 +7,16 @@ import { FormValues } from "@/lib/types";
 import { FieldIcons } from "@/lib/FormsIcons";
 import { Spinner } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
-import { useLogin } from "@/hooks/learner/useAuth"
+// import { useLogin } from "@/hooks/learner/useAuth"
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 
 
-import { handleGoogleSignIn } from '@/actions/auth-actions';
-// import { signIn } from "@/googleAuth/googleAuth";
-import { signIn,useSession } from "next-auth/react";
+
+
 import { signin } from "@/features/learnerAuthSlice";
+import { fetchLearnerCourses } from "@/features/courseSlice";
+import { signIn } from "next-auth/react";
 
 
 interface LoginFormsProps {
@@ -31,7 +32,7 @@ const LoginForms: React.FC<LoginFormsProps> = ({ onForgotPasswordClick, onSignup
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-const { data: session, status } = useSession();
+// const { data: session, status } = useSession();
   const router = useRouter();
 
   const togglePasswordVisibility = (): void => {
@@ -48,29 +49,105 @@ const { data: session, status } = useSession();
     watch,
   } = useForm<FormValues>();
 
+
+  const handleGoogleSignIn = () => {
+    setIsGoogleLoading(true);
+    signIn("google", {
+      callbackUrl: "/learner",
+    }).finally(() => setIsGoogleLoading(false));
+  };
+  
+
+  // const handleLogin = async (data: FormValues) => {
+  //   const loginEndpoint = "/api/auth/login/learner";
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await fetch(loginEndpoint, {
+  //       method: "POST",
+  //       body: JSON.stringify(data),
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  
+  //     const result = await response.json();
+  
+  //     if (result.success && result.user) {
+  //       // Transform API response to match learnerAuthSlice format
+  //       const learnerData = {
+  //         email: result.user.email,
+  //         id: result.user._id, // Map _id to id
+  //       };
+  
+  //       // Dispatch to learner auth slice
+  //       dispatch(signin(learnerData));
+
+  //       toast({
+  //         title: "Login Successful",
+  //         description: "You're now logged in as a learner",
+  //         status: "success",
+  //         duration: 5000,
+  //         isClosable: true,
+  //       });
+  //       router.push("/learner");
+
+  //     } else {
+  //       throw new Error(result.message || "Learner login failed");
+  //     }
+  //   } catch (error: any) {
+  //     toast({
+  //       title: "Login Failed",
+  //       description: "Invalid Credentials",
+  //       // status: "error",
+  //       duration: 5000,
+  //       isClosable: true,
+  //     });
+  //     console.error("Learner login error:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const handleLogin = async (data: FormValues) => {
     const loginEndpoint = "/api/auth/login/learner";
     setIsLoading(true);
+  
     try {
       const response = await fetch(loginEndpoint, {
         method: "POST",
         body: JSON.stringify(data),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       });
   
-      const result = await response.json();
+      const responseText = await response.text();
   
+      // Handle case where API returns plain text like "Success!"
+      if (responseText.trim() === "Success!") {
+        throw new Error("The email or password you entered is incorrect");
+      }
+  
+      // Try to parse response as JSON
+      let result;
+      try {
+        result = JSON.parse(responseText);
+      } catch (e) {
+        throw new Error("We're having trouble processing your login.");
+      }
+  
+      // Handle HTTP errors
+      if (!response.ok) {
+        throw new Error(
+          result?.message ||
+          (response.status === 400 ? "Invalid email or password" : "Login failed")
+        );
+      }
+  
+      // Handle successful login
       if (result.success && result.user) {
-        // Transform API response to match learnerAuthSlice format
-        const learnerData = {
+        dispatch(signin({
           email: result.user.email,
-          id: result.user._id, // Map _id to id
-        };
-  
-        // Dispatch to learner auth slice
-        dispatch(signin(learnerData));
+          id: result.user._id,
+        }));
   
         toast({
           title: "Login Successful",
@@ -79,40 +156,41 @@ const { data: session, status } = useSession();
           duration: 5000,
           isClosable: true,
         });
+  
         router.push("/learner");
       } else {
-        throw new Error(result.message || "Learner login failed");
+        throw new Error(result?.message || "Authentication failed");
       }
+  
     } catch (error: any) {
       toast({
         title: "Login Failed",
-        description: error.message,
-        status: "error",
+        // description: error.message,
+        description: "Invalid Credentials",
+        // status: "error",
         duration: 5000,
         isClosable: true,
       });
-      console.error("Learner login error:", error);
+      // console.error("Login error:", error);
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div>
     <h1 className="text-center font-bold text-xl text-black mb-2">Login</h1>
         
         <div className="flex items-center justify-center mb-2">
-          <div className="border border-casbBluePrimary w-64 mx-auto flex items-center justify-center gap-1 ">
+          <div className="border border-casbBluePrimary w-80 px-6 py-2 flex items-center justify-center gap-1 ">
             <Image src="/Google.png" alt="google" width={15} height={15} />
             {isGoogleLoading ? (
-              <div className="flex items-center justify-center gap-2">
-              <Spinner size="sm" color="blue.500" thickness="4px" speed="0.65s" />
-            </div>
-            ) : (
-              <form action={handleGoogleSignIn}>
-              <button  >Log in using Google</button>
-            </form>
-            )}
+  <Spinner size="sm" color="blue.500" thickness="4px" speed="0.65s" />
+) : (
+  <button onClick={handleGoogleSignIn}>Log in using Google</button>
+)}
+
           </div>
         </div>
         <p className="text-center my-1">or</p>

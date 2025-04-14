@@ -80,7 +80,7 @@ const OtpForm = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           token: fullCode.trim(),
-        }),
+        }), 
       });
 
       const result = await response.json();
@@ -88,7 +88,7 @@ const OtpForm = () => {
         // If needed, map _id to id for your signin payload:
         const adminUser = { ...result.Admin, id: result.Admin._id, role: "admin" };
         dispatch(signin(adminUser));
-        await signOut({ redirect: false });
+        // await signOut({ redirect: false });
         router.push("/admin/dashboard");
       } else {
         setError(result.message || "OTP verification failed. Please try again.");

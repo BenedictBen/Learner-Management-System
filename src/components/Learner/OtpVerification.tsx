@@ -1,9 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useOtpVerify } from "@/hooks/learner/useAuth";
 import Image from "next/image";
-import { useSelector, shallowEqual } from "react-redux";
+import { useRouter } from "next/navigation";
+import { useSelector,  shallowEqual, useDispatch } from "react-redux";
 import { RootState } from "@/lib/store";
 import { Spinner } from "@chakra-ui/react";
+import { signOut } from "next-auth/react";
+import { learnerLoadSession, signin } from "@/features/learnerAuthSlice";
 
 
 interface VerificationCodeProps {
@@ -19,13 +22,24 @@ const OtpVerification: React.FC<VerificationCodeProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string>("");
   const inputRefs = useRef<(HTMLInputElement | null)[]>(Array(6).fill(null));
-  const { pendingUserEmail } = useSelector((state: RootState) => state.auth);
-  const { verificationToken } = useSelector((state: RootState) => state.auth);
+  const { pendingUserEmail } = useSelector((state: RootState) => state.learnerAuth);
+  const { verificationToken } = useSelector((state: RootState) => state.learnerAuth);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { mutate: verifyOtp, isPending } = useOtpVerify();
-
+  const [isLoading, setIsLoading] = useState(false);
   const storedEmail = localStorage.getItem("pendingEmail") || "";
   const storedToken = localStorage.getItem("verificationToken") || "";
+
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  useEffect(() => {
+    dispatch(learnerLoadSession());
+  }, [dispatch]);
+
+
+
 
   const handleChange = (index: number, value: string) => {
     // Allow only digits and ensure the value is a single character
@@ -44,21 +58,72 @@ const OtpVerification: React.FC<VerificationCodeProps> = ({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    return () => {
+      // Clear loading states when component unmounts
+      setIsLoading(false);
+      setIsSubmitting(false);
+    };
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    setIsLoading(true);
+    setError(null);
+  
     const fullCode = code.join("");
-
     if (fullCode.length !== 6 || !/^\d+$/.test(fullCode)) {
       setError("Please enter a valid 6-digit code.");
+      setIsLoading(false);
       return;
     }
+  
+    try {
+      const response = await fetch("/api/auth/otp/learner", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: 'include', // Added for cookies
+        body: JSON.stringify({ token: fullCode.trim() }),
+      });
+  
+      const result = await response.json();
+      
+      if (result.success && result.user) {
+  
+        const learnerUser = { 
+          ...result.user,
+          id: result.user._id, 
+          role: "learner" 
+        };
+        
+        dispatch(signin(learnerUser));
+  
+        router.push("/learner");
+      } else {
+        setError(result.message || "Verification failed. Please try again.");
+      }
+    } catch (err: any) {
+      setError(err.message || "Verification failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+
+  //   const fullCode = code.join("");
+
+  //   if (fullCode.length !== 6 || !/^\d+$/.test(fullCode)) {
+  //     setError("Please enter a valid 6-digit code.");
+  //     return;
+  //   }
 
 
     
 
-    verifyOtp(fullCode.trim());
-  };
+  //   verifyOtp(fullCode.trim());
+  // };
 
   return (
     <div>
@@ -66,7 +131,7 @@ const OtpVerification: React.FC<VerificationCodeProps> = ({
         <h1 className="text-center font-bold text-xl mb-2 text-black">
           OTP Verification
         </h1>
-
+ 
         <span className="text-center text-black">
           Verify your accounts using six digit sent to{" "}
           <p className="font-bold">
@@ -111,7 +176,7 @@ const OtpVerification: React.FC<VerificationCodeProps> = ({
         </div>
 
         {/* Verify Button */}
-        {isPending ? (
+        {isLoading ? (
           <div className="flex items-center justify-center hover:bg-casbBlueHover cursor-pointer mb-4 text-white py-2 rounded bg-casbBluePrimary">
             <Spinner size="sm" color="blue-500" />
             <span>Verifying...</span>
