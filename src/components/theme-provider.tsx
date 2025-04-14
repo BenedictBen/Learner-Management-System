@@ -24,6 +24,8 @@ export function ThemeProvider({
       attribute="class"
       defaultTheme="light" // 👈 this ensures light is default
       enableSystem={false} // 👈 optional: disable system preference
+      storageKey="theme" // Explicit storage key
+      disableTransitionOnChange // Prevent flash
       {...props}
     >
       {children}

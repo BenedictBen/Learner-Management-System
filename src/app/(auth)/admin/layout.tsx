@@ -20,7 +20,7 @@ export default function AdminLayout({
   return (
     <ThemeProvider
       attribute="class"
-      defaultTheme="dark" // Force dark mode for admin
+      defaultTheme="light" // Force dark mode for admin
       enableSystem={false}
       disableTransitionOnChange
     >

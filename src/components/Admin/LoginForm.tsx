@@ -102,7 +102,7 @@ const LoginForm = () => {
         <h1 className="font-bold text-xl lg:text-2xl text-center md:text-left max-w-md mx-auto mb-4 text-white md:text-black dark:text-white">
           Login into your account
         </h1>
-        <div className="mx-auto space-y-6 p-4 md:p-0 bg-white dark:bg-black md:max-w-md">
+        <div className="mx-auto space-y-6 p-4 md:p-0 bg-white md:max-w-md">
           <div className="mb-4 md:mb-6 lg:mb-8 ">
             <div className="relative flex items-center">
               {FieldIcons.email && (

@@ -163,7 +163,7 @@ const SignupForm = () => {
         <h1 className="font-bold text-xl lg:text-2xl text-center md:text-left p-2 mb-4  text-white md:text-black md:dark:text-white">
           Register to get started
         </h1>
-        <div className="max-w-md mx-auto space-y-6 p-4 md:p-0 bg-white dark:bg-black">
+        <div className="max-w-md mx-auto space-y-6 p-4 md:p-0 bg-white ">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mb-4 md:mb-6 lg:mb-8">
             <div className="relative">
               <div className="relative flex items-center">
