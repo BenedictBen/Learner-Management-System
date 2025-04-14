@@ -115,65 +115,63 @@ const OtpForm = () => {
           {verificationToken || storedToken || "your code"}
         </p>
       </div>
-      <form
-        onSubmit={handleSubmit}
-        className="w-full md:max-w-7xl mx-auto  md:p-8 "
-      >
-        
-            <h1 className="font-bold text-xl lg:text-2xl text-center md:text-left max-w-md mx-auto mb-4 text-white md:text-black dark:text-white">OTP verification</h1>
-          <div className="mx-auto space-y-6 p-4 md:p-0 bg-white dark:bg-black md:max-w-md">
-            <div className="flex justify-center space-x-3">
-              {code.map((digit, index) => (
-                <input
-                key={index}
-                type="text"
-                value={digit}
-                onChange={(e) => handleChange(index, e.target.value)}
-                maxLength={1}
-                ref={(el: HTMLInputElement | null) =>
-                  (inputRefs.current[index] = el)
-                }
-                className={`w-10 md:w-16 h-12 text-center border rounded bg-[#E6E6E6] focus:border-casbBluePrimary focus:outline-none ${
-                  errors.email
-                    ? "!bg-red-100 border-gray-300"
-                    : watch("email")
-                    ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
-                    : "border-blue-500 bg-white dark:bg-black dark:text-white"
-                } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary focus:outline-none transition-colors duration-300`}
-              />              
-              ))}
-            </div>
-          
-          {/* Error Message */}
-          {error && (
-            <p className="text-red-500 text-sm mt-1 text-center">{error}</p>
-          )}
 
-          
-                    {isLoading ? (
-                      <div className="flex items-center justify-center hover:bg-casbBlueHover cursor-pointer mb-4 text-white py-2 rounded bg-casbBluePrimary w-full  mx-auto">
-                        <Spinner size="sm" color="blue-500" />
-                        <span>Verifying...</span>
-                      </div>
-                    ) : (
-                      <div className="w-full  mx-auto">
-            <button
-                        type="submit"
-                        className="w-full px-8 py-3 bg-casbGreyPrimary text-black rounded hover:bg-casbBluePrimary hover:text-white transition-colors duration-300 flex items-center justify-center gap-2"
-                      >
-                        Verify account
-                        <Image
-                          src="/chevron-right-white.png"
-                          alt="chevron"
-                          width={20}
-                          height={20}
-                        />
-                      </button>
-          </div>
-                    )}
-          
-          </div>
-      </form>
+      <form
+  onSubmit={handleSubmit}
+  className="w-full md:max-w-7xl mx-auto md:p-8"
+>
+  <h1 className="font-bold text-xl lg:text-2xl text-center md:text-left max-w-md mx-auto mb-4 text-white md:text-black">
+    OTP verification
+  </h1>
+  
+  <div className="mx-auto space-y-6 p-4 md:p-0 bg-white md:max-w-md">
+    <div className="flex justify-center space-x-3">
+      {code.map((digit, index) => (
+        <input
+          key={index}
+          type="text"
+          value={digit}
+          onChange={(e) => handleChange(index, e.target.value)}
+          maxLength={1}
+          ref={(el: HTMLInputElement | null) => (inputRefs.current[index] = el)}
+          className={`w-10 md:w-16 h-12 text-center border rounded focus:border-casbBluePrimary focus:outline-none text-black ${
+            error
+              ? "bg-red-100 border-gray-300"
+              : "border-blue-500 bg-white"
+          } transition-colors duration-300`}
+        />              
+      ))}
+    </div>
+  
+    {/* Error Message */}
+    {error && (
+      <p className="text-red-500 text-sm mt-1 text-center">{error}</p>
+    )}
+
+    {isLoading ? (
+      <div className="flex items-center justify-center hover:bg-casbBlueHover cursor-pointer mb-4 text-white py-2 rounded bg-casbBluePrimary w-full mx-auto">
+        <Spinner size="sm" color="white" />
+        <span>Verifying...</span>
+      </div>
+    ) : (
+      <div className="w-full mx-auto">
+        <button
+          type="submit"
+          className="w-full px-8 py-3 bg-casbGreyPrimary text-black rounded hover:bg-casbBluePrimary hover:text-white transition-colors duration-300 flex items-center justify-center gap-2"
+        >
+          Verify account
+          <Image
+            src="/chevron-right-white.png"
+            alt="chevron"
+            width={20}
+            height={20}
+          />
+        </button>
+      </div>
+    )}
+  </div>
+</form>
+      
       <div className="flex gap-1 mt-3">
             <p className="text-white md:text-black">Didn't get a code? </p>
             <button className="underline decoration-casbBluePrimary text-white cursor-pointer md:text-casbBluePrimary">

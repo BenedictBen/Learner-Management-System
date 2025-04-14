@@ -66,8 +66,8 @@ const ResetPasswordForm = () => {
                   errors.password
                     ? "!bg-red-100 border-gray-300"
                     : watch("password")
-                   ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
-                      : "border-blue-500 bg-white dark:bg-black dark:text-white"
+                   ? "!bg-green-100  border-gray-300"
+                      : "border-blue-500 bg-white dark:text-white"
                 } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300`}
               
               />
@@ -117,8 +117,8 @@ const ResetPasswordForm = () => {
                   errors.confirmPassword
                     ? "!bg-red-100 border-gray-300"
                     : watch("confirmPassword")
-                   ? "!bg-green-100 dark:bg-black dark:text-black border-gray-300"
-                      : "border-blue-500 bg-white dark:bg-black dark:text-white"
+                   ? "!bg-green-100  border-gray-300"
+                      : "border-blue-500 bg-white  dark:text-white"
                 } placeholder-gray-400 dark:placeholder-white focus:border-casbBluePrimary  focus:outline-none transition-colors duration-300`}
               
               />

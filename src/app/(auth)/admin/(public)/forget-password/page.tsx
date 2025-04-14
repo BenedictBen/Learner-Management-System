@@ -25,7 +25,7 @@ const ForgetPasswordPage = () => {
 
   
   {/* Right Section */}
-  <div className="flex flex-col flex-[2] justify-center px-10 relative">
+  <div className="flex flex-col flex-[2] justify-center px-10 relative bg-white">
    
   <div className="absolute top-8 left-16 border border-casbBluePrimary rounded-sm flex items-center gap-2 p-2">
     {/* Image */}

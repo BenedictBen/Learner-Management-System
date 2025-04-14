@@ -58,56 +58,6 @@ const LoginForms: React.FC<LoginFormsProps> = ({ onForgotPasswordClick, onSignup
   };
   
 
-  // const handleLogin = async (data: FormValues) => {
-  //   const loginEndpoint = "/api/auth/login/learner";
-  //   setIsLoading(true);
-  //   try {
-  //     const response = await fetch(loginEndpoint, {
-  //       method: "POST",
-  //       body: JSON.stringify(data),
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-  
-  //     const result = await response.json();
-  
-  //     if (result.success && result.user) {
-  //       // Transform API response to match learnerAuthSlice format
-  //       const learnerData = {
-  //         email: result.user.email,
-  //         id: result.user._id, // Map _id to id
-  //       };
-  
-  //       // Dispatch to learner auth slice
-  //       dispatch(signin(learnerData));
-
-  //       toast({
-  //         title: "Login Successful",
-  //         description: "You're now logged in as a learner",
-  //         status: "success",
-  //         duration: 5000,
-  //         isClosable: true,
-  //       });
-  //       router.push("/learner");
-
-  //     } else {
-  //       throw new Error(result.message || "Learner login failed");
-  //     }
-  //   } catch (error: any) {
-  //     toast({
-  //       title: "Login Failed",
-  //       description: "Invalid Credentials",
-  //       // status: "error",
-  //       duration: 5000,
-  //       isClosable: true,
-  //     });
-  //     console.error("Learner login error:", error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
   const handleLogin = async (data: FormValues) => {
     const loginEndpoint = "/api/auth/login/learner";
     setIsLoading(true);

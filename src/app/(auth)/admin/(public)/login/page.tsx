@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
 
-    const router = useRouter();
+const router = useRouter();
   
   return (
     <div>
@@ -25,7 +25,7 @@ const LoginPage = () => {
   </div>
 
   {/* Right Section */}
-  <div className="flex flex-col flex-[2] justify-center px-10 relative">
+  <div className="flex flex-col flex-[2] justify-center px-10 relative bg-white">
     {/* Login Button (Top-Right) */}
     <div className="absolute top-4 right-10 flex items-center gap-2">
       <h1 className="text-casbDisabled underline decoration-casbDisabled ">
