@@ -21,10 +21,10 @@ const LearnerNextStep = () => {
       <div className="bg-casbBluePrimary w-full py-12 text-white">
         <div className='flex items-center justify-center flex-col gap-3 mb-7'>
           <h1 className='font-bold text-2xl'>What will be next step</h1>
-          <p className='px-6 text-center text-sm'>
-            Discover our diverse stack of solutions, including software development, data science, and cloud tools.
-            Sign up today and kickstart your journey!
+          <p className='px-6 w-1/3 text-center text-sm'>
+            Discover our diverse stack of solutions, including software development, data science, 
           </p>
+         
         </div>
 
         <div className="container flex items-center justify-center mx-auto w-full">

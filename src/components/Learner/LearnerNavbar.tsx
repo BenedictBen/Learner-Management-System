@@ -58,19 +58,7 @@ const HomeNavbar = () => {
       .join("");
   };
 
-  // const actualDisplayName = user ? 
-  //   (user.name ? user.name : getDisplayName(user.email)) : "Guest";
 
-  // Combine Redux user and Google session data
-  // const getUserData = () => {
-  //   // Priority to Redux user data if authenticated
-  //   if (isAuthenticated && user) {
-  //     return {
-  //       name: user.name || getDisplayName(user.email),
-  //       email: user.email,
-  //       image: user.image
-  //     };
-  //   }
   
   const getCurrentUser = () => {
     // Priority to Redux authenticated user
@@ -98,9 +86,7 @@ const HomeNavbar = () => {
     };
   };
 
-  // const userData = getUserData();
-  // const actualDisplayName = userData.name;
-  // const isGoogleAuthenticated = !!session?.user;
+
 
   const currentUser = getCurrentUser();
   const actualDisplayName = currentUser.name;
@@ -111,7 +97,7 @@ const HomeNavbar = () => {
 
   return (
     <div className="fixed top-0 left-0 w-full z-30 bg-white">
-      <div className="bg-white flex items-center justify-between px-2 py-4 md:justify-around md:px-[0]">
+      <div className="bg-white flex items-center justify-between px-2 py-4 md:justify-between md:px-[150px]">
         <div className="flex items-center gap-5 cursor-pointer">
           <Image alt="logo" src="/logo-L.png" width={80} height={20} />
           <div className="hidden md:flex">
