@@ -32,7 +32,7 @@ const LoginForms: React.FC<LoginFormsProps> = ({ onForgotPasswordClick, onSignup
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-// const { data: session, status } = useSession();
+
   const router = useRouter();
 
   const togglePasswordVisibility = (): void => {
@@ -115,13 +115,12 @@ const LoginForms: React.FC<LoginFormsProps> = ({ onForgotPasswordClick, onSignup
     } catch (error: any) {
       toast({
         title: "Login Failed",
-        // description: error.message,
-        description: "Invalid Credentials",
-        // status: "error",
+        description: error.message,
+        status: "error",
         duration: 5000,
         isClosable: true,
       });
-      // console.error("Login error:", error);
+      console.error("Login error:", error);
     } finally {
       setIsLoading(false);
     }
