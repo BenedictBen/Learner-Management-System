@@ -140,7 +140,7 @@ const Home = () => {
         </p>
         <Link
           href="/admin/login"
-          className="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-all duration-200 shadow-sm"
+          className="w-full inline-flex cursor-pointer items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-all duration-200 shadow-sm"
         >
           Go to Admin Portal
           <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -166,7 +166,7 @@ const Home = () => {
         </p>
         <button
           onClick={handleLearnerClick}
-          className="w-full inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 transition-all duration-200 shadow-sm"
+          className="w-full inline-flex cursor-pointer items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 transition-all duration-200 shadow-sm"
         >
           {isLearnerLoading ? (
             <>
